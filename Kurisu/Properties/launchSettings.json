@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Kurisu": {
+      "commandName": "Project",
+      "commandLineArgs": "bot.cfg"
+    }
+  }
+}
