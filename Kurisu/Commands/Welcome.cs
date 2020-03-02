@@ -24,13 +24,14 @@ namespace Kurisu.Commands
                 .WithThumbnailUrl(ctx.User.AvatarUrl)
                 .Build();
 
-            await ctx.RespondAsync(embed: embed);
+            await ctx.RespondAsync(embed: embed, content: welcome.Mention ? ctx.Member.Mention : null);
         }
 
         [Command("body"), Description("Set the body")]
         public async Task Body(CommandContext ctx, string body)
         {
             Program.Guilds[ctx.Guild.Id].Welcome.Body = body;
+            await ctx.RespondAsync("Body has been updated.");
 
             await Update(ctx.Guild.Id);
         }
@@ -39,6 +40,7 @@ namespace Kurisu.Commands
         public async Task Title(CommandContext ctx, string title)
         {
             Program.Guilds[ctx.Guild.Id].Welcome.Header = title;
+            await ctx.RespondAsync("Title has been updated.");
 
             await Update(ctx.Guild.Id);
         }
@@ -47,6 +49,7 @@ namespace Kurisu.Commands
         public async Task Body(CommandContext ctx, DiscordChannel channel)
         {
             Program.Guilds[ctx.Guild.Id].Welcome.Channel = channel.Id.ToString();
+            await ctx.RespondAsync("Channel has been updated.");
 
             await Update(ctx.Guild.Id);
         }
@@ -64,6 +67,7 @@ namespace Kurisu.Commands
         public async Task Color(CommandContext ctx, int color)
         {
             Program.Guilds[ctx.Guild.Id].Welcome.Color = color;
+            await ctx.RespondAsync("Color has been updated.");
 
             await Update(ctx.Guild.Id);
         }
@@ -72,6 +76,7 @@ namespace Kurisu.Commands
         public async Task Color(CommandContext ctx, bool mention)
         {
             Program.Guilds[ctx.Guild.Id].Welcome.Mention = mention;
+            await ctx.RespondAsync("Mentions in welcome messages are now " + (mention ? "enabled." : "disabled."));
 
             await Update(ctx.Guild.Id);
         }
