@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
@@ -68,6 +69,40 @@ namespace Kurisu.Modules
                 .Build();
 
             await ctx.RespondAsync(embed: embed);
+        }
+
+        [Command("channel"), Description("See info about a channel")]
+        public async Task Channel(CommandContext ctx, DiscordChannel chan = null)
+        {
+            var channel = chan ?? ctx.Channel;
+
+            var embed = new DiscordEmbedBuilder()
+                .WithTitle($"#{channel.Name}")
+                .WithDescription(channel.Id.ToString())
+                .AddField("Age", $"{channel.CreationTimestamp.Humanize()} ({channel.CreationTimestamp:g})");
+
+            if (!string.IsNullOrWhiteSpace(channel.Topic))
+            {
+                // remove messy newlines
+                var topic = channel.Topic.Replace("\n", "");
+
+                embed.AddField("Topic", topic.Substring(0,
+                    topic.Length < 300 ? topic.Length : 300));
+            }
+
+            if (channel.Type == ChannelType.Voice)
+                embed.AddField("Bitrate", $"{channel.Bitrate / 1000}kbps");
+
+            await ctx.RespondAsync(embed: embed.Build());
+        }
+
+        [Command("ping"), Description("See the bot's ping")]
+        public async Task Ping(CommandContext ctx)
+        {
+            var message = await ctx.RespondAsync("Pong!");
+
+            var ping = message.CreationTimestamp - ctx.Message.CreationTimestamp;
+            await message.ModifyAsync($"Ping: {ping.Humanize()}");
         }
 
         [Command("settings")]
