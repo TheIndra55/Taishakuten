@@ -89,6 +89,7 @@ namespace Kurisu
                 EnableDms = false
             });
 
+            // register commands
             Commands.RegisterCommands<Administration>();
             Commands.RegisterCommands<Information>();
             Commands.RegisterCommands<Remind>();
@@ -102,7 +103,7 @@ namespace Kurisu
 
             _discord.Ready += async e =>
             {
-                await _discord.UpdateStatusAsync(new DiscordGame("Tomb Raider"));
+                await _discord.UpdateStatusAsync(new DiscordGame((string) Game.Value));
             };
 
             _discord.GuildMemberAdded += GuildMemberAdded;
@@ -112,6 +113,9 @@ namespace Kurisu
             await Task.Delay(-1);
         }
 
+        /// <summary>
+        /// Triggered when an user join a guild
+        /// </summary>
         private static async Task GuildMemberAdded(GuildMemberAddEventArgs e)
         {
             var welcome = Guilds[e.Guild.Id].Welcome;
@@ -130,8 +134,12 @@ namespace Kurisu
             await channel.SendMessageAsync(embed: embed, content: welcome.Mention ? e.Member.Mention : null);
         }
 
+        /// <summary>
+        /// Triggered when a new guild has become available
+        /// </summary>
         private static async Task GuildAvailable(GuildCreateEventArgs e)
         {
+            // check if guild exists in the database
             var guild = await R.Db(Database.Value).Table("guilds").Get(e.Guild.Id.ToString()).RunResultAsync<Guild>(Connection);
             if (guild == null)
             {
@@ -147,9 +155,14 @@ namespace Kurisu
                 return;
             }
 
+            // add to memory
             Guilds.Add(e.Guild.Id, guild);
         }
 
+        /// <summary>
+        /// Reads the config file by path into convars
+        /// </summary>
+        /// <param name="file">Path to the config file</param>
         private static void ReadConfig(string file)
         {
             // todo protection

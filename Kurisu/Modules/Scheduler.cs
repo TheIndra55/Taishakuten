@@ -25,7 +25,8 @@ namespace Kurisu.Modules
 
         private async void Poll(object state)
         {
-                Cursor<Reminder> cursor = await R.Db(Program.Database.Value)
+            // get all reminders which passed and did not fire yet
+            Cursor<Reminder> cursor = await R.Db(Program.Database.Value)
                 .Table("reminders")
                 .Filter(x => 
                     x["remind_at"].Lt(R.Now())
@@ -33,6 +34,7 @@ namespace Kurisu.Modules
                             .Eq(false)))
                 .RunCursorAsync<Reminder>(Program.Connection);
 
+            // return if not any
             if(cursor.BufferedSize == 0) return;
 
             foreach (var reminder in cursor)
@@ -42,6 +44,7 @@ namespace Kurisu.Modules
 
                 await channel.SendMessageAsync($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.");
 
+                // set is_fired to true and update record in database
                 reminder.Fired = true;
                 await R.Db(Program.Database.Value)
                     .Table("reminders")

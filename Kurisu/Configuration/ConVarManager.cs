@@ -30,6 +30,7 @@ namespace Kurisu.Configuration
             int integer;
             object val = value;
 
+            // try to parse it as an integer
             if (int.TryParse(value, out integer))
             {
                 val = integer;

@@ -35,6 +35,7 @@ namespace Kurisu.Modules
         [Command("reminders"), Description("List all reminders.")]
         public async Task Reminders(CommandContext ctx)
         {
+            // get all reminders
             var reminders = await R.Db(Program.Database.Value).Table("reminders")
                 .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString())).RunCursorAsync<Reminder>(Program.Connection);
 
@@ -51,6 +52,7 @@ namespace Kurisu.Modules
         [Command("cancel"), Description("Cancel a reminder.")]
         public async Task Cancel(CommandContext ctx)
         {
+            // get all active reminders
             var reminders = await R.Db(Program.Database.Value).Table("reminders")
                 .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()).And(x["is_fired"].Eq(false)))
                 .RunCursorAsync<Reminder>(Program.Connection);
@@ -71,9 +73,11 @@ namespace Kurisu.Modules
 
             var interactivity = ctx.Client.GetInteractivityModule();
 
+            // wait for user response with an integer
             var msg = await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && int.TryParse(m.Content, out _), TimeSpan.FromMinutes(1));
             if (msg != null)
             {
+                // get the reminder which user wants to cancel
                 var reminder = items.ElementAtOrDefault(int.Parse(msg.Message.Content));
                 if (reminder == null)
                 {

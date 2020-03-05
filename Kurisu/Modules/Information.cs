@@ -74,6 +74,7 @@ namespace Kurisu.Modules
         [Command("channel"), Description("See info about a channel")]
         public async Task Channel(CommandContext ctx, DiscordChannel chan = null)
         {
+            // get mentioned channel, else use current channel
             var channel = chan ?? ctx.Channel;
 
             var embed = new DiscordEmbedBuilder()
@@ -101,6 +102,7 @@ namespace Kurisu.Modules
         {
             var message = await ctx.RespondAsync("Pong!");
 
+            // get the time difference between the ping command and bot response
             var ping = message.CreationTimestamp - ctx.Message.CreationTimestamp;
             await message.ModifyAsync($"Ping: {ping.Humanize()}");
         }
