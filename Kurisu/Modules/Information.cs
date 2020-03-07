@@ -24,7 +24,7 @@ namespace Kurisu.Modules
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true);
 
-            await ctx.RespondAsync("", false, embed);
+            await ctx.RespondAsync(embed: embed);
         }
 
         [Command("guild"), Aliases("server", "serverinfo"), Description("Shows information about the current guild")]

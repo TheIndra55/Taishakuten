@@ -9,5 +9,8 @@ namespace Kurisu.Models
 
         [JsonProperty("welcome")]
         public Welcome Welcome { get; set; } = new Welcome();
+
+        [JsonProperty("virus_scan")]
+        public VirusScan VirusScan { get; set; } = new VirusScan();
     }
 }

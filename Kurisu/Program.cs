@@ -10,11 +10,14 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using Kurisu.Modules;
 using Kurisu.Configuration;
+using Kurisu.External.VirusTotal;
 using Kurisu.Models;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
 using static Kurisu.Configuration.ConVarManager;
+using VirusScan = Kurisu.Commands.VirusScan;
 using Welcome = Kurisu.Commands.Welcome;
+using Scan = Kurisu.Modules.Scan;
 
 namespace Kurisu
 {
@@ -32,6 +35,8 @@ namespace Kurisu
         public static ConVar Token { get; set; }
         public static ConVar Game { get; set; }
         public static ConVar Database { get; set; }
+
+        public static ConVar VirusTotalKey { get; set; }
 
         public static Dictionary<ulong, Guild> Guilds = new Dictionary<ulong, Guild>();
 
@@ -51,6 +56,7 @@ namespace Kurisu
                 _discord.UpdateStatusAsync(new DiscordGame((string) Game.Value));
             });
             Database = RegisterConVar("database");
+            VirusTotalKey = RegisterConVar("virustotal_key");
 
             if (args.Length == 0)
             {
@@ -82,6 +88,12 @@ namespace Kurisu
             _interactivity = _discord.UseInteractivity(new InteractivityConfiguration());
             _discord.AddModule(new Scheduler());
 
+            // setup virusscan module
+            var scan = new Scan();
+            scan.VirusTotal = new VirusTotal((string) VirusTotalKey.Value);
+
+            _discord.AddModule(scan);
+
             // initialize CommandsNext
             Commands = _discord.UseCommandsNext(new CommandsNextConfiguration
             {
@@ -95,6 +107,7 @@ namespace Kurisu
             Commands.RegisterCommands<Remind>();
 
             Commands.RegisterCommands<Welcome>();
+            Commands.RegisterCommands<VirusScan>();
 
             Commands.CommandErrored += async e =>
             {
