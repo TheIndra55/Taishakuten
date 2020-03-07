@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using RethinkDb.Driver;
 
 namespace Kurisu.Commands
 {
-    [Group("virusscan"), Aliases("virustotal"), Description("Setup virus scanning for uploads on this guild")]
+    [Group("virusscan"), Aliases("virustotal"), Description("Setup virus scanning for uploads on this guild"), RequirePermissions(Permissions.ManageGuild)]
     class VirusScan
     {
         public RethinkDB R = RethinkDB.R;
