@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.NetworkInformation;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -41,7 +37,16 @@ namespace Kurisu.Modules
             if(attachment == null) return;
 
             var hash = await CalculateHashAsync(attachment.Url);
-            var report = await VirusTotal.GetReport(hash);
+            Report report;
+
+            try
+            {
+                report = await VirusTotal.GetReport(hash);
+            }
+            catch (HttpStatusCodeException)
+            {
+                return;
+            }
 
             if (report.Positives > 0)
             {

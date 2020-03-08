@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
@@ -35,6 +32,9 @@ namespace Kurisu.External.VirusTotal
             using (var client = new HttpClient())
             {
                 var response = await client.GetAsync(uri.ToString());
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpStatusCodeException(response);
+
                 return JsonConvert.DeserializeObject<Report>(await response.Content.ReadAsStringAsync());
             }
         }
