@@ -104,6 +104,7 @@ namespace Kurisu
             // register commands
             Commands.RegisterCommands<Administration>();
             Commands.RegisterCommands<Information>();
+            Commands.RegisterCommands<Moderation>();
             Commands.RegisterCommands<Remind>();
 
             Commands.RegisterCommands<Welcome>();
