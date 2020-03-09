@@ -89,8 +89,12 @@ namespace Kurisu
             _discord.AddModule(new Scheduler());
 
             // setup virusscan module
-            var scan = new Scan();
-            scan.VirusTotal = new VirusTotal((string) VirusTotalKey.Value);
+            var scan = new Scan
+            {
+                VirusTotal = new VirusTotal((string) VirusTotalKey.Value)
+            };
+
+            VirusTotalKey.Callback = () => { scan.VirusTotal.Key = (string) VirusTotalKey.Value; };
 
             _discord.AddModule(scan);
 
