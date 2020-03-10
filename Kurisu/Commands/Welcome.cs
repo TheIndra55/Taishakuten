@@ -7,7 +7,7 @@ using RethinkDb.Driver;
 
 namespace Kurisu.Commands
 {
-    [Group("welcome"), Aliases("joinmessage"), Description("Change properties for the welcome message"), RequirePermissions(Permissions.ManageGuild)]
+    [Group("welcome"), Aliases("joinmessage"), Description("Change properties for the welcome message"), RequireUserPermissions(Permissions.ManageGuild)]
     class Welcome
     {
         public RethinkDB R = RethinkDB.R;

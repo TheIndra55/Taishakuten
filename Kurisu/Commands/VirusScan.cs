@@ -10,7 +10,7 @@ using RethinkDb.Driver;
 
 namespace Kurisu.Commands
 {
-    [Group("virusscan"), Aliases("virustotal"), Description("Setup virus scanning for uploads on this guild"), RequirePermissions(Permissions.ManageGuild)]
+    [Group("virusscan"), Aliases("virustotal"), Description("Setup virus scanning for uploads on this guild"), RequireUserPermissions(Permissions.ManageGuild)]
     class VirusScan
     {
         public RethinkDB R = RethinkDB.R;
