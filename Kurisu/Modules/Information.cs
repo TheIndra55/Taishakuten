@@ -48,16 +48,24 @@ namespace Kurisu.Modules
         [Command("user"), Aliases("whois", "userinfo", "member"), Description("See info about a member")]
         public async Task User(CommandContext ctx, DiscordMember user)
         {
+            var mutual =
+                ctx.Client.Guilds.Where(guild => guild.Value.Members.Any(member => member.Id == user.Id)).ToList();
+
             var embed = new DiscordEmbedBuilder()
                 .WithTitle($"{user.Username}#{user.Discriminator}")
                 .WithDescription(user.Id.ToString())
                 .AddField("Account creation", $"{user.CreationTimestamp.Humanize()} ({user.CreationTimestamp:g})")
                 .AddField("Guild join", $"{user.JoinedAt.Humanize()} ({user.JoinedAt:g})")
                 .AddField("Roles", string.Join(", ", user.Roles.Select(x => $"`{x.Name}`")))
-                .WithThumbnailUrl(user.AvatarUrl)
-                .Build();
+                .WithThumbnailUrl(user.AvatarUrl);
 
-            await ctx.RespondAsync(embed: embed);
+            if (mutual.Any())
+            {
+                // show all guilds the bot and user share
+                embed.AddField($"Mutual guilds ({mutual.Count()})", string.Join(", ", mutual.Select(x => $"`{x.Value.Name}`").Take(5)));
+            }
+
+            await ctx.RespondAsync(embed: embed.Build());
         }
 
         [Command("avatar"), Aliases("pf", "pic"), Description("Shows the user's avatar")]
