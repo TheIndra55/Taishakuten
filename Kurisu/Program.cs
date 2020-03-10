@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
@@ -116,6 +117,8 @@ namespace Kurisu
 
             Commands.CommandErrored += async e =>
             {
+                if(e.Exception is CommandNotFoundException) return;
+
                 await e.Context.RespondAsync($"An error occured while executing the command:\n`{e.Exception.Message}`");
             };
 
