@@ -28,7 +28,7 @@ namespace Kurisu.Modules
                 At = DateTime.Now + offset
             };
 
-            var cursor = await R.Db(Program.Database.Value).Table("reminders").Insert(reminder).RunAsync(Program.Connection);
+            var cursor = await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
             await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
         }
 
@@ -36,7 +36,7 @@ namespace Kurisu.Modules
         public async Task Reminders(CommandContext ctx)
         {
             // get all reminders
-            var reminders = await R.Db(Program.Database.Value).Table("reminders")
+            var reminders = await R.Table("reminders")
                 .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString())).RunCursorAsync<Reminder>(Program.Connection);
 
             if (reminders.BufferedSize == 0)
@@ -53,7 +53,7 @@ namespace Kurisu.Modules
         public async Task Cancel(CommandContext ctx)
         {
             // get all active reminders
-            var reminders = await R.Db(Program.Database.Value).Table("reminders")
+            var reminders = await R.Table("reminders")
                 .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()).And(x["is_fired"].Eq(false)))
                 .RunCursorAsync<Reminder>(Program.Connection);
 
@@ -85,7 +85,7 @@ namespace Kurisu.Modules
                     return;
                 }
 
-                await R.Db(Program.Database.Value).Table("reminders").Get(reminder.Id).Delete().RunAsync(Program.Connection);
+                await R.Table("reminders").Get(reminder.Id).Delete().RunAsync(Program.Connection);
                 await ctx.RespondAsync("This reminder has been canceled.");
             }
         }

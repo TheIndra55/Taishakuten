@@ -26,7 +26,7 @@ namespace Kurisu.Modules
         private async void Poll(object state)
         {
             // get all reminders which passed and did not fire yet
-            Cursor<Reminder> cursor = await R.Db(Program.Database.Value)
+            Cursor<Reminder> cursor = await R
                 .Table("reminders")
                 .Filter(x => 
                     x["remind_at"].Lt(R.Now())
@@ -46,7 +46,7 @@ namespace Kurisu.Modules
 
                 // set is_fired to true and update record in database
                 reminder.Fired = true;
-                await R.Db(Program.Database.Value)
+                await R
                     .Table("reminders")
                     .Get(reminder.Id)
                     .Update(reminder)

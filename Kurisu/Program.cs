@@ -77,6 +77,8 @@ namespace Kurisu
                 .Timeout(RethinkDBConstants.DefaultTimeout)
                 .Connect();
 
+            Connection.Use((string) Database.Value);
+
             // initialize Discord bot
             _discord = new DiscordClient(new DiscordConfiguration
             {
@@ -161,7 +163,7 @@ namespace Kurisu
         private static async Task GuildAvailable(GuildCreateEventArgs e)
         {
             // check if guild exists in the database
-            var guild = await R.Db(Database.Value).Table("guilds").Get(e.Guild.Id.ToString()).RunResultAsync<Guild>(Connection);
+            var guild = await R.Table("guilds").Get(e.Guild.Id.ToString()).RunResultAsync<Guild>(Connection);
             if (guild == null)
             {
                 // doesn't exist insert
@@ -171,7 +173,7 @@ namespace Kurisu
                 };
                 Guilds.Add(e.Guild.Id, guild);
 
-                await R.Db(Database.Value).Table("guilds").Insert(guild).RunAsync(Connection);
+                await R.Table("guilds").Insert(guild).RunAsync(Connection);
 
                 return;
             }

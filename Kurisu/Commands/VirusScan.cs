@@ -44,7 +44,7 @@ namespace Kurisu.Commands
 
         public async Task Update(ulong guild)
         {
-            await R.Db(Program.Database.Value).Table("guilds").Get(guild.ToString()).Update(Program.Guilds[guild]).RunAsync(Program.Connection);
+            await R.Table("guilds").Get(guild.ToString()).Update(Program.Guilds[guild]).RunAsync(Program.Connection);
         }
     }
 }
