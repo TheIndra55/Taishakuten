@@ -19,7 +19,7 @@ namespace Kurisu.Modules
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Client.CurrentUser.Username)
                 .AddField("Author", "TheIndra", true)
-                .AddField("Software", "Kurisu", true)
+                .AddField("Software", "[Kurisu](https://github.com/TheIndra55/Kurisu)", true)
                 .AddField("Library", "DSharpPlus", true)
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true);
