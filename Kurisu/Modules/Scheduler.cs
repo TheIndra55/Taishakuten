@@ -39,10 +39,17 @@ namespace Kurisu.Modules
 
             foreach (var reminder in cursor)
             {
-                var channel = await _client.GetChannelAsync(ulong.Parse(reminder.ChannelId));
-                var user = await _client.GetUserAsync(ulong.Parse(reminder.UserId));
+                try
+                {
+                    var channel = await _client.GetChannelAsync(ulong.Parse(reminder.ChannelId));
+                    var user = await _client.GetUserAsync(ulong.Parse(reminder.UserId));
 
-                await channel.SendMessageAsync($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.");
+                    await channel.SendMessageAsync($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.");
+                }
+                catch(Exception ex)
+                {
+                    reminder.LastError = ex.Message;
+                }
 
                 // set is_fired to true and update record in database
                 reminder.Fired = true;

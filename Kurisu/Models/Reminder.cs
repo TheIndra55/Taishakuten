@@ -25,6 +25,9 @@ namespace Kurisu.Models
 
         [JsonProperty("is_fired")]
         public bool Fired { get; set; }
+
+        [JsonProperty("last_error")]
+        public string LastError { get; set; } = null;
     }
 
     sealed class SanitizeStringConverter : JsonConverter
