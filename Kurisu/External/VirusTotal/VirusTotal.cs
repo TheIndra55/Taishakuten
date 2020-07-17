@@ -6,25 +6,18 @@ using Newtonsoft.Json;
 
 namespace Kurisu.External.VirusTotal
 {
-    class VirusTotal
+    static class VirusTotal
     {
-        public string Key { get; set; }
-
-        public VirusTotal(string key)
-        {
-            Key = key;
-        }
-
         /// <summary>
         /// Retrieve file scan report from VirusTotal by resource (MD5, SHA-1, SHA-256 hash)
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
-        public async Task<Report> GetReport(string resource)
+        public static async Task<Report> GetReport(string key, string resource)
         {
             var uri = new UriBuilder(new Uri("https://www.virustotal.com/vtapi/v2/file/report"));
             var query = HttpUtility.ParseQueryString(string.Empty);
-            query["apikey"] = Key;
+            query["apikey"] = key;
             query["resource"] = resource;
 
             uri.Query = query.ToString();

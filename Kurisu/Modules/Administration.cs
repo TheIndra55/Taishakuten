@@ -1,29 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using static Kurisu.Configuration.ConVarManager;
+using Kurisu.Configuration;
 
 namespace Kurisu.Modules
 {
     class Administration
     {
         [Command("convar"), RequireOwner]
-        public async Task ConVar(CommandContext ctx, string name, string value = null)
+        public async Task Convar(CommandContext ctx, string name, string value = null)
         {
             // set or get?
             if (value == null)
             {
-                if (!DoesConVarExist(name)) return;
-                var convar = GetConVar(name);
+                var val = ConVar.Get<string>(name);
 
-                await ctx.RespondAsync($"\"{name}\" is set to \"{convar.Value}\"\ntype is \"{convar.Value.GetType()}\"");
+                var type = ConVar.Convars[name].Value;
+                var convar = ConVar.Convars[name].Key;
+
+                await ctx.RespondAsync($"\"{name}\" is set to \"{val}\"\n" +
+                    $"type is \"{type.PropertyType}\"\n" +
+                    $"defined in \"{type.DeclaringType.FullName}\"\n" +
+                    $"description is \"{convar.HelpText}\"");
                 return;
             }
 
-            SetConVar(name, value);
+            ConVar.Set(name, value);
             return;
         }
     }

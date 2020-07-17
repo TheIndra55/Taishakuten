@@ -11,35 +11,39 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using Kurisu.Modules;
 using Kurisu.Configuration;
-using Kurisu.External.VirusTotal;
 using Kurisu.Models;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
-using static Kurisu.Configuration.ConVarManager;
-using VirusScan = Kurisu.Commands.VirusScan;
-using Welcome = Kurisu.Commands.Welcome;
-using Scan = Kurisu.Modules.Scan;
+using System.Reflection;
 
 namespace Kurisu
 {
     class Program
     {
+        // static variables
         public static RethinkDB R = RethinkDB.R;
 
-        private static DiscordClient _discord { get; set; }
-        private static InteractivityModule _interactivity { get; set; }
+        public static DiscordClient Client { get; private set; }
+        public static InteractivityModule Interactivity { get; private set; }
 
         public static Connection Connection { get; private set; }
 
         private static CommandsNextModule Commands { get; set; }
 
-        public static ConVar Token { get; set; }
-        public static ConVar Game { get; set; }
-        public static ConVar Database { get; set; }
-
-        public static ConVar VirusTotalKey { get; set; }
-
         public static Dictionary<ulong, Guild> Guilds = new Dictionary<ulong, Guild>();
+
+        // convars
+        [ConVar("token", HelpText = "The bot token")]
+        public static string Token { get; set; }
+
+        [ConVar("database_name")]
+        public static string Database { get; set; }
+
+        [ConVar("database_host")]
+        public static string DatabaseHostname { get; set; }
+
+        [ConVar("presence", HelpText = "The presence the bot is 'playing'")]
+        public static string Game { get; set; }
 
         static void Main(string[] args)
         {
@@ -48,16 +52,23 @@ namespace Kurisu
 
         static async Task MainAsync(string[] args)
         {
-            // register convars
-            Token = RegisterConVar("token");
-            Game = RegisterConVar("game", () =>
-            {
-                if (_discord == null) return;
+            var types = Assembly.GetExecutingAssembly().GetTypes();
 
-                _discord.UpdateStatusAsync(new DiscordGame((string) Game.Value));
-            });
-            Database = RegisterConVar("database");
-            VirusTotalKey = RegisterConVar("virustotal_key");
+            foreach (var type in types)
+            {
+                // get all properties with the ConVar attribute
+                var convars = type.GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVar), false).Any());
+
+                foreach (var property in convars)
+                {
+                    // get the convar attribute from the property
+                    var convar = property.GetCustomAttribute<ConVar>(true);
+
+                    // add the property to list of convars
+                    // this will be used later to trace back which property belongs to which convar
+                    ConVar.Convars.Add(convar.Name, new KeyValuePair<ConVar, PropertyInfo>(convar, property));
+                }
+            }
 
             if (args.Length == 0)
             {
@@ -69,40 +80,31 @@ namespace Kurisu
             ReadConfig(args[0]);
 
             // connect to database
-            var host = RegisterConVar("database_host");
-
             Connection = R.Connection()
-                .Hostname((string) host.Value)
+                .Hostname(DatabaseHostname)
                 .Port(RethinkDBConstants.DefaultPort)
                 .Timeout(RethinkDBConstants.DefaultTimeout)
                 .Connect();
 
-            Connection.Use((string) Database.Value);
+            Connection.Use(Database);
 
             // initialize Discord bot
-            _discord = new DiscordClient(new DiscordConfiguration
+            Client = new DiscordClient(new DiscordConfiguration
             {
-                Token = (string) Token.Value,
+                Token = Token,
                 TokenType = TokenType.Bot,
                 LogLevel = LogLevel.Debug,
                 UseInternalLogHandler = true
             });
 
-            _interactivity = _discord.UseInteractivity(new InteractivityConfiguration());
-            _discord.AddModule(new Scheduler());
+            Interactivity = Client.UseInteractivity(new InteractivityConfiguration());
 
-            // setup virusscan module
-            var scan = new Scan
-            {
-                VirusTotal = new VirusTotal((string) VirusTotalKey.Value)
-            };
-
-            VirusTotalKey.Callback = () => { scan.VirusTotal.Key = (string) VirusTotalKey.Value; };
-
-            _discord.AddModule(scan);
+            // setup modules
+            Client.AddModule(new Scheduler());
+            Client.AddModule(new Scan());
 
             // initialize CommandsNext
-            Commands = _discord.UseCommandsNext(new CommandsNextConfiguration
+            Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
                 StringPrefix = "d!",
                 EnableDms = false
@@ -119,20 +121,21 @@ namespace Kurisu
 
             Commands.CommandErrored += async e =>
             {
-                if(e.Exception is CommandNotFoundException) return;
+                if (e.Exception is CommandNotFoundException) return;
 
                 await e.Context.RespondAsync($"An error occured while executing the command:\n`{e.Exception.Message}`");
             };
 
-            _discord.Ready += async e =>
+            Client.Ready += async e =>
             {
-                await _discord.UpdateStatusAsync(new DiscordGame((string) Game.Value));
+                await Client.UpdateStatusAsync(new DiscordGame(Game));
             };
 
-            _discord.GuildMemberAdded += GuildMemberAdded;
-            _discord.GuildAvailable += GuildAvailable;
+            Client.GuildMemberAdded += GuildMemberAdded;
+            Client.GuildAvailable += GuildAvailable;
 
-            await _discord.ConnectAsync();
+            // start bot
+            await Client.ConnectAsync();
             await Task.Delay(-1);
         }
 
@@ -145,7 +148,7 @@ namespace Kurisu
             if (welcome.Channel == null) return;
 
             var channel = e.Guild.GetChannel(ulong.Parse(welcome.Channel));
-            if(channel == null) return;
+            if (channel == null) return;
 
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(string.Format(welcome.Header, e.Member.Username))
@@ -199,7 +202,7 @@ namespace Kurisu
                 var name = split[0];
                 var value = string.Join(" ", split.Skip(1));
 
-                SetConVar(name, value);
+                ConVar.Set(name, value);
             }
         }
     }

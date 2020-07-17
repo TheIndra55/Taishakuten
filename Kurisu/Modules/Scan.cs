@@ -6,20 +6,21 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using Kurisu.Configuration;
 using Kurisu.External.VirusTotal;
 
 namespace Kurisu.Modules
 {
     class Scan : BaseModule
     {
-        private DiscordClient _client { get; set; }
+        private DiscordClient _client;
 
-        public VirusTotal VirusTotal { get; set; }
+        [ConVar("virustotal_key", HelpText = "The VirusTotal API key")]
+        public static string Key { get; set; }
 
         protected override void Setup(DiscordClient client)
         {
             _client = client;
-
             _client.MessageCreated += MessageCreated;
         }
 
@@ -41,7 +42,7 @@ namespace Kurisu.Modules
 
             try
             {
-                report = await VirusTotal.GetReport(hash);
+                report = await VirusTotal.GetReport(Key, hash);
             }
             catch (HttpStatusCodeException)
             {

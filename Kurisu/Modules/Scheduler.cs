@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using DSharpPlus;
+using Kurisu.Configuration;
 using Kurisu.Models;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
@@ -16,11 +17,14 @@ namespace Kurisu.Modules
         private DiscordClient _client;
         private Timer _timer;
 
+        [ConVar("scheduler_timeout", HelpText = "The time between polling the database for reminders")]
+        public static int Timeout { get; set; } = 30;
+
         protected override void Setup(DiscordClient client)
         {
             _client = client;
 
-            _timer = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(30).TotalMilliseconds);
+            _timer = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
         }
 
         private async void Poll(object state)
