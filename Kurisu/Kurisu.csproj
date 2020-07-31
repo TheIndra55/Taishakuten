@@ -9,8 +9,22 @@
     <PackageReference Include="DSharpPlus" Version="3.2.3" />
     <PackageReference Include="DSharpPlus.CommandsNext" Version="3.2.3" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="3.2.3" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.48.0" />
+    <PackageReference Include="Google.Apis.Core" Version="1.48.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.12.4" />
+    <PackageReference Include="Grpc.Auth" Version="2.30.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.30.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.30.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="RethinkDb.Driver" Version="2.3.150" />
+
+    <Protobuf Include="External\GoogleAssistant\Proto\embedded_assistant.proto" />
+    <Protobuf Include="External\GoogleAssistant\Proto\latlng.proto" />
+    <Protobuf Include="External\GoogleAssistant\Proto\annotations.proto" />
+    <Protobuf Include="External\GoogleAssistant\Proto\http.proto" />
   </ItemGroup>
 
 </Project>
