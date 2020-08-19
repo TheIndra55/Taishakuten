@@ -16,10 +16,10 @@ namespace Kurisu.VirusScan
         public bool ThirdParty { get; set; }
 
         /// <summary>
-        /// Scans a file or looks up a SHA1 hash for any viruses or malware
+        /// Scans a file or looks up a SHA265 hash for any viruses or malware
         /// </summary>
         /// <param name="file">The stream containing the file</param>
-        /// <param name="hash">The SHA1 hash of the file</param>
+        /// <param name="hash">The SHA265 hash of the file</param>
         public Task<ScanResult> ScanAsync(Stream file, string hash);
     }
 }

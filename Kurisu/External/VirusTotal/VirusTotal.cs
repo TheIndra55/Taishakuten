@@ -35,7 +35,7 @@ namespace Kurisu.External.VirusTotal
             return new ScanResult()
             {
                 Score = report.Positives,
-                Detection = report.Scans.First(x => x.Value.Detected).Value.Result
+                Detection = report.Scans.FirstOrDefault(x => x.Value.Detected).Value?.Result
             };
         }
 

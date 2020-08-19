@@ -20,5 +20,10 @@ namespace Kurisu.VirusScan
         /// Gets or sets extra information returned by this scan, leave empty for not being present
         /// </summary>
         public string Extra { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image associated with this scan
+        /// </summary>
+        public string Image { get; set; }
     }
 }

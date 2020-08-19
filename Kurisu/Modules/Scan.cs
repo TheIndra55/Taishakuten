@@ -8,6 +8,7 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Kurisu.Configuration;
+using Kurisu.External.HybridAnalysis;
 using Kurisu.External.VirusTotal;
 using Kurisu.VirusScan;
 
@@ -25,7 +26,8 @@ namespace Kurisu.Modules
 
             _scans = new List<IScan>()
             {
-                new VirusTotal()
+                new VirusTotal(),
+                new HybridAnalysis()
             };
         }
 
@@ -77,6 +79,12 @@ namespace Kurisu.Modules
                 {
                     var scan = result.Value;
                     embed.AddField(result.Key.Name, $"Score: {scan.Score}, Detection: {scan.Detection}");
+
+                    if (scan.Extra != null)
+                        embed.AddField("Extra", scan.Extra);
+
+                    if (scan.Image != null)
+                        embed.ImageUrl = scan.Image;
                 }
 
                 await e.Message.RespondAsync(embed: embed.Build());
@@ -88,7 +96,7 @@ namespace Kurisu.Modules
             using (var client = new HttpClient())
             {
                 var stream = await client.GetStreamAsync(url);
-                using (var sha1 = SHA1.Create())
+                using (var sha1 = SHA256.Create())
                 {
                     var hash = sha1.ComputeHash(stream);
 
