@@ -118,7 +118,7 @@ namespace Kurisu
             Commands.RegisterCommands<Remind>();
 
             Commands.RegisterCommands<Welcome>();
-            Commands.RegisterCommands<VirusScan>();
+            Commands.RegisterCommands<Commands.VirusScan>();
             Commands.RegisterCommands<Assistant>();
 
             Commands.CommandErrored += async e =>

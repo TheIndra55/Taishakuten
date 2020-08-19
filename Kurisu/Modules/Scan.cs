@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -8,20 +9,24 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Kurisu.Configuration;
 using Kurisu.External.VirusTotal;
+using Kurisu.VirusScan;
 
 namespace Kurisu.Modules
 {
     class Scan : BaseModule
     {
         private DiscordClient _client;
-
-        [ConVar("virustotal_key", HelpText = "The VirusTotal API key")]
-        public static string Key { get; set; }
+        private List<IScan> _scans;
 
         protected override void Setup(DiscordClient client)
         {
             _client = client;
             _client.MessageCreated += MessageCreated;
+
+            _scans = new List<IScan>()
+            {
+                new VirusTotal()
+            };
         }
 
         private async Task MessageCreated(MessageCreateEventArgs e)
@@ -37,34 +42,48 @@ namespace Kurisu.Modules
 
             if(attachment == null) return;
 
-            var hash = await CalculateHashAsync(attachment.Url);
-            Report report;
+            var file = await GetFile(attachment.Url);
 
-            try
+            // run all scans
+            var results = new Dictionary<IScan, ScanResult>();
+            foreach (var scan in _scans)
             {
-                report = await VirusTotal.GetReport(Key, hash);
-            }
-            catch (HttpStatusCodeException)
-            {
-                return;
+                ScanResult result;
+
+                try
+                {
+                    result = await scan.ScanAsync(file.Stream, file.Hash);
+                }
+                catch (NoScanResultException)
+                {
+                    continue;
+                }
+
+                if(result.Score == 0) continue;
+
+                results.Add(scan, result);
             }
 
-            if (report.Positives > 0)
+            if (results.Count > 0)
             {
                 var embed = new DiscordEmbedBuilder()
-                    .WithTitle(Path.GetFileName(attachment.Url) + (report.Positives > 4 ? " ❗" : "" ))
-                    .WithDescription($"[{hash}]({report.Link})")
-                    .AddField("Score", $"{report.Positives}/{report.Total} engines detected")
-                    .AddField("Detection", report.Scans.First(x => x.Value.Detected).Value.Result)
-                    .WithFooter("Powered by VirusTotal")
-                    .WithColor(new DiscordColor(0x2b3bbf))
-                    .Build();
+                    .WithTitle(Path.GetFileName(attachment.Url))
+                    .WithDescription(file.Hash)
+                    .WithFooter($"Powered by " + string.Join(", ",
+                        _scans.Where(x => x.ThirdParty).Select(x => x.Name)))
+                    .WithColor(new DiscordColor(0x2b3bbf));
 
-                await e.Message.RespondAsync(embed: embed);
+                foreach (var result in results)
+                {
+                    var scan = result.Value;
+                    embed.AddField(result.Key.Name, $"Score: {scan.Score}, Detection: {scan.Detection}");
+                }
+
+                await e.Message.RespondAsync(embed: embed.Build());
             }
         }
 
-        private async Task<string> CalculateHashAsync(string url)
+        private async Task<DownloadedFile> GetFile(string url)
         {
             using (var client = new HttpClient())
             {
@@ -72,9 +91,20 @@ namespace Kurisu.Modules
                 using (var sha1 = SHA1.Create())
                 {
                     var hash = sha1.ComputeHash(stream);
-                    return string.Join(null, hash.Select(x => x.ToString("x2")));
+
+                    return new DownloadedFile()
+                    {
+                        Hash = string.Join(null, hash.Select(x => x.ToString("x2"))),
+                        Stream = stream
+                    };
                 }
             }
+        }
+
+        private struct DownloadedFile
+        {
+            public string Hash { get; set; }
+            public Stream Stream { get; set; }
         }
     }
 }
