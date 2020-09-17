@@ -10,6 +10,7 @@ using DSharpPlus.EventArgs;
 using Kurisu.Configuration;
 using Kurisu.External.HybridAnalysis;
 using Kurisu.External.VirusTotal;
+using Kurisu.Scan;
 using Kurisu.VirusScan;
 
 namespace Kurisu.Modules
@@ -27,7 +28,8 @@ namespace Kurisu.Modules
             _scans = new List<IScan>()
             {
                 new VirusTotal(),
-                new HybridAnalysis()
+                new HybridAnalysis(),
+                new KurisuScan()
             };
         }
 
@@ -95,7 +97,12 @@ namespace Kurisu.Modules
         {
             using (var client = new HttpClient())
             {
-                var stream = await client.GetStreamAsync(url);
+                var response = await client.GetStreamAsync(url);
+                var stream = new MemoryStream();
+
+                response.CopyTo(stream);
+                stream.Position = 0;
+
                 using (var sha1 = SHA256.Create())
                 {
                     var hash = sha1.ComputeHash(stream);

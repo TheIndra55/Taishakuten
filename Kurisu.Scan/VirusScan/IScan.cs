@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Kurisu.VirusScan
 {
-    interface IScan
+    public interface IScan
     {
         /// <summary>
         /// Gets or sets the name of this scan service

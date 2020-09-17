@@ -102,7 +102,7 @@ namespace Kurisu
 
             // setup modules
             Client.AddModule(new Scheduler());
-            Client.AddModule(new Scan());
+            Client.AddModule(new Modules.Scan());
 
             // initialize CommandsNext
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration

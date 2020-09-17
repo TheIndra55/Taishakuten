@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kurisu.VirusScan
 {
-    class NoScanResultException : Exception
+    public class NoScanResultException : Exception
     {
         public NoScanResultException()
         {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kurisu.VirusScan
 {
-    class ScanResult
+    public class ScanResult
     {
         /// <summary>
         /// Gets or sets the score returned by the antivirus scan

@@ -20,6 +20,7 @@
     </PackageReference>
     <PackageReference Include="Humanizer.Core" Version="2.7.9" />
     <PackageReference Include="RethinkDb.Driver" Version="2.3.150" />
+    <ProjectReference Include="..\Kurisu.Scan\Kurisu.Scan.csproj" />
 
     <Protobuf Include="External\GoogleAssistant\Proto\embedded_assistant.proto" />
     <Protobuf Include="External\GoogleAssistant\Proto\latlng.proto" />
