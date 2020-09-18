@@ -36,6 +36,8 @@ namespace Kurisu.Scan
                 throw new NoScanResultException();
             }
 
+            // check import table for suspicious imports
+            // this should not be trusted as programs can still import functions by using LoadLibrary and GetProcAddress
             var imports = SuspiciousIndicators.Where(indicator => pe.Imports.Any(x => x.Imports.Any(y => indicator == y.Name)));
 
             result.Score = imports.Count();

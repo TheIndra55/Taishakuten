@@ -1,6 +1,8 @@
-﻿namespace Kurisu.Scan.PE
+﻿using System.Runtime.InteropServices;
+
+namespace Kurisu.Scan.PE
 {
-    unsafe struct ImageDosHeader
+    struct ImageDosHeader
     {
         public ushort e_magic;
         public ushort e_cblp;
@@ -16,10 +18,12 @@
         public ushort e_cs;
         public ushort e_lfarlc;
         public ushort e_ovno;
-        public fixed ushort e_res[4];
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.LPStruct, SizeConst = 4)]
+        public ushort[] e_res;
         public ushort e_oemid;
         public ushort e_oeminfo;
-        public fixed ushort e_res2[10];
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.LPStruct, SizeConst = 10)]
+        public ushort[] e_res2;
         public uint e_lfanew;
     }
 }
