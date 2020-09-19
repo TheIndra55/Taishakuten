@@ -77,6 +77,8 @@ namespace Kurisu
                 return;
             }
 
+            ReadConfig("build.cfg");
+
             // execute launch file
             ReadConfig(args[0]);
 

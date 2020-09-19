@@ -7,22 +7,29 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Humanizer;
+using Kurisu.Configuration;
 using Newtonsoft.Json;
 
 namespace Kurisu.Modules
 {
     class Information
     {
+        [ConVar("version")]
+        public static string Version { get; set; }
+
         [Command("about"), Aliases("info"), Description("Show information about the bot")]
         public async Task About(CommandContext ctx)
         {
+            var shortVersion = Version.Substring(0, 7);
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Client.CurrentUser.Username)
                 .AddField("Author", "TheIndra", true)
-                .AddField("Software", "[Kurisu](https://github.com/TheIndra55/Kurisu)", true)
                 .AddField("Library", "DSharpPlus", true)
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
-                .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true);
+                .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true)
+                .AddField("Source code", "https://github.com/TheIndra55/Kurisu")
+                .AddField("Version", $"[{shortVersion}](https://github.com/TheIndra55/Kurisu/commit/{Version})")
+                .WithThumbnailUrl(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png));
 
             await ctx.RespondAsync(embed: embed);
         }
