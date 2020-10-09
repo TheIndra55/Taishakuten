@@ -17,6 +17,9 @@ jobs:
     
     - name: Publish with dotnet
       run: dotnet publish -r linux-arm -c Release -o publish/linux-arm
+
+    - name: Run tests
+      run: dotnet test
     
     - name: Write version
       run: 'echo "version $GITHUB_SHA" > publish/linux-arm/build.cfg'
