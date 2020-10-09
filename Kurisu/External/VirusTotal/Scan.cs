@@ -2,7 +2,7 @@
 
 namespace Kurisu.External.VirusTotal
 {
-    class Scan
+    public class Scan
     {
         [JsonProperty("detected")]
         public bool Detected { get; set; }

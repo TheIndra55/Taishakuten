@@ -2,7 +2,7 @@
 
 namespace Kurisu.Scan.PE
 {
-    struct ImageDosHeader
+    public struct ImageDosHeader
     {
         public ushort e_magic;
         public ushort e_cblp;

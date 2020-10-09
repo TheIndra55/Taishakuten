@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.External.VirusTotal
 {
-    class VirusTotal : IScan
+    public class VirusTotal : IScan
     {
         public string Name { get; set; } = "VirusTotal";
         public bool ThirdParty { get; set; } = true;

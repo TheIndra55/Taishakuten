@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29209.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kurisu", "Kurisu\Kurisu.csproj", "{79980374-1DD0-4F66-AAFF-7271E8FEDC9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kurisu.Scan", "Kurisu.Scan\Kurisu.Scan.csproj", "{8BC60F23-B72D-413C-A36E-954D0A99BC14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kurisu.Scan", "Kurisu.Scan\Kurisu.Scan.csproj", "{8BC60F23-B72D-413C-A36E-954D0A99BC14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kurisu.Test", "Kurisu.Test\Kurisu.Test.csproj", "{A98F08B5-D100-4A2C-BA23-F1234BABC95E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8BC60F23-B72D-413C-A36E-954D0A99BC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BC60F23-B72D-413C-A36E-954D0A99BC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BC60F23-B72D-413C-A36E-954D0A99BC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A98F08B5-D100-4A2C-BA23-F1234BABC95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A98F08B5-D100-4A2C-BA23-F1234BABC95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A98F08B5-D100-4A2C-BA23-F1234BABC95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A98F08B5-D100-4A2C-BA23-F1234BABC95E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

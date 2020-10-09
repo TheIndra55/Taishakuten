@@ -2,7 +2,7 @@
 
 namespace Kurisu.Scan.PE
 {
-    struct ImageSectionHeader
+    public struct ImageSectionHeader
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public char[] Name;

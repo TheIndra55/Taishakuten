@@ -1,6 +1,6 @@
 ﻿namespace Kurisu.Scan.PE
 {
-    struct ImageFileHeader
+    public struct ImageFileHeader
     {
         public uint Signature;
         public ushort Machine;

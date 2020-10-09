@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.External.HybridAnalysis
 {
-    class Summary
+    public class Summary
     {
         [JsonProperty("multiscan_result")]
         public int Score { get; set; }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.Models
 {
-    class Reminder
+    public class Reminder
     {
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }

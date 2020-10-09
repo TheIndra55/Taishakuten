@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kurisu.Scan.PE
 {
-    class Module
+    public class Module
     {
         public string Name { get; set; }
         public List<Import> Imports { get; set; }

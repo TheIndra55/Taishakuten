@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.External.VirusTotal
 {
-    class Report
+    public class Report
     {
         [JsonProperty("scan_id")]
         public string Id { get; set; }

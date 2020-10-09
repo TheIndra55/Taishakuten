@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Kurisu.Configuration;
@@ -11,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.External.HybridAnalysis
 {
-    class HybridAnalysis : IScan
+    public class HybridAnalysis : IScan
     {
         public string Name { get; set; } = "Hybrid Analysis";
         public bool ThirdParty { get; set; } = true;

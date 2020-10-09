@@ -1,6 +1,6 @@
 ﻿namespace Kurisu.Scan.PE
 {
-    struct ImportDirectoryTable
+    public struct ImportDirectoryTable
     {
         public uint LookupTableRVA;
         public uint Timestamp;

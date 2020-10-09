@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kurisu.Scan.PE
 {
-    class PEReader
+    public class PEReader
     {
         public Stream Stream { get; private set; }
 

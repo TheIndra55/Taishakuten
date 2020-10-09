@@ -2,7 +2,7 @@
 
 namespace Kurisu.Scan.PE
 {
-    struct ImageOptionalHeader64
+    public struct ImageOptionalHeader64
     {
         public ushort Magic;
         public byte MajorLinkerVersion;
@@ -37,7 +37,7 @@ namespace Kurisu.Scan.PE
         public ImageDataDirectory[] DataDirectory;
     }
 
-    struct ImageDataDirectory
+    public struct ImageDataDirectory
     {
         public uint VirtualAddress;
         public uint Size;
