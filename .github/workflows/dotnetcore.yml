@@ -20,6 +20,9 @@ jobs:
 
     - name: Run tests
       run: dotnet test
+      env:
+        HYBRIDANALYSIS_KEY: ${{ secrets.HYBRIDANALYSIS_KEY }}
+        VIRUSTOTAL_KEY: ${{ secrets.VIRUSTOTAL_KEY }}
     
     - name: Write version
       run: 'echo "version $GITHUB_SHA" > publish/linux-arm/build.cfg'
