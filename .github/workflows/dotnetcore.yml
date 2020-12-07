@@ -14,15 +14,15 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    
-    - name: Publish with dotnet
-      run: dotnet publish -r linux-arm -c Release -o publish/linux-arm
 
     - name: Run tests
       run: dotnet test
       env:
         HYBRIDANALYSIS_KEY: ${{ secrets.HYBRIDANALYSIS_KEY }}
         VIRUSTOTAL_KEY: ${{ secrets.VIRUSTOTAL_KEY }}
+
+    - name: Publish with dotnet
+      run: dotnet publish -r linux-arm -c Release -o publish/linux-arm
     
     - name: Write version
       run: 'echo "version $GITHUB_SHA" > publish/linux-arm/build.cfg'

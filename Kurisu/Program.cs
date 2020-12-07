@@ -119,7 +119,7 @@ namespace Kurisu
             Commands.RegisterCommands<Moderation>();
             Commands.RegisterCommands<Remind>();
 
-            Commands.RegisterCommands<Welcome>();
+            Commands.RegisterCommands<Commands.Welcome>();
             Commands.RegisterCommands<Commands.VirusScan>();
             Commands.RegisterCommands<Assistant>();
 
