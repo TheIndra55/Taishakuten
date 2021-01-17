@@ -4,30 +4,10 @@ using System.Reflection;
 
 namespace Kurisu.Configuration
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ConVar : Attribute
+    public static class ConVar
     {
-        /// <summary>
-        /// The name of the convar
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// A description describing the convar
-        /// </summary>
-        public string HelpText { get; set; }
-
-        /// <summary>
-        /// Mark this property as convar
-        /// </summary>
-        /// <param name="name"></param>
-        public ConVar(string name)
-        {
-            Name = name;
-        }
-
         // static convar functions
-        public static Dictionary<string, KeyValuePair<ConVar, PropertyInfo>> Convars = new Dictionary<string, KeyValuePair<ConVar, PropertyInfo>>();
+        public static Dictionary<string, KeyValuePair<ConVarAttribute, PropertyInfo>> Convars = new Dictionary<string, KeyValuePair<ConVarAttribute, PropertyInfo>>();
 
         /// <summary>
         /// Gets a convar value

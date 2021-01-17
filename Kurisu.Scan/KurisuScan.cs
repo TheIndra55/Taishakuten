@@ -44,7 +44,7 @@ namespace Kurisu.Scan
             result.Detection = "Suspicious imports";
             result.Extra = $"Suspicious imports: {string.Join(", ", imports)}";
 
-            return result;
+            return await Task.FromResult(result);
         }
     }
 }

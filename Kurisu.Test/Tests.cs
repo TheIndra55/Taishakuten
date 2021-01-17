@@ -25,8 +25,8 @@ namespace Kurisu.Test
             var convars = typeof(Tests).GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVar), false).Any());
             foreach (var property in convars)
             {
-                var convar = property.GetCustomAttribute<ConVar>(true);
-                ConVar.Convars.Add(convar.Name, new KeyValuePair<ConVar, PropertyInfo>(convar, property));
+                var convar = property.GetCustomAttribute<ConVarAttribute>(true);
+                ConVar.Convars.Add(convar.Name, new KeyValuePair<ConVarAttribute, PropertyInfo>(convar, property));
             }
         }
 

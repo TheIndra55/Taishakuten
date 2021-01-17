@@ -71,8 +71,10 @@ namespace Kurisu.Scan.PE
 
             foreach(var entry in entries)
             {
-                var module = new Module();
-                module.Imports = new List<Import>();
+                var module = new Module
+                {
+                    Imports = new List<Import>()
+                };
 
                 Stream.Position = entry.Name - dataSection.VirtualAddress + dataSection.PointerToRawData;
                 module.Name = ReadString();
@@ -81,8 +83,7 @@ namespace Kurisu.Scan.PE
 
                 do
                 {
-                    Import import;
-                    var read = ReadImportLookupTable(out import);
+                    var read = ReadImportLookupTable(out Import import);
                     if (!read) break;
 
                     module.Imports.Add(import);

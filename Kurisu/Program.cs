@@ -46,6 +46,9 @@ namespace Kurisu
         [ConVar("presence", HelpText = "The presence the bot is 'playing'")]
         public static string Game { get; set; }
 
+        [ConVar("prefix")]
+        public static string Prefix { get; set; } = "d!";
+
         static void Main(string[] args)
         {
             MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -63,11 +66,11 @@ namespace Kurisu
                 foreach (var property in convars)
                 {
                     // get the convar attribute from the property
-                    var convar = property.GetCustomAttribute<ConVar>(true);
+                    var convar = property.GetCustomAttribute<ConVarAttribute>(true);
 
                     // add the property to list of convars
                     // this will be used later to trace back which property belongs to which convar
-                    ConVar.Convars.Add(convar.Name, new KeyValuePair<ConVar, PropertyInfo>(convar, property));
+                    ConVar.Convars.Add(convar.Name, new KeyValuePair<ConVarAttribute, PropertyInfo>(convar, property));
                 }
             }
 
@@ -109,7 +112,7 @@ namespace Kurisu
             // initialize CommandsNext
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefix = "d!",
+                StringPrefix = Prefix,
                 EnableDms = false
             });
 
