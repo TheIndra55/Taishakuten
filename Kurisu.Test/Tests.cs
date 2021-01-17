@@ -22,7 +22,7 @@ namespace Kurisu.Test
             VirusTotal.Key = Environment.GetEnvironmentVariable("VIRUSTOTAL_KEY");
             HybridAnalysis.Key = Environment.GetEnvironmentVariable("HYBRIDANALYSIS_KEY");
 
-            var convars = typeof(Tests).GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVar), false).Any());
+            var convars = typeof(Tests).GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVarAttribute), false).Any());
             foreach (var property in convars)
             {
                 var convar = property.GetCustomAttribute<ConVarAttribute>(true);

@@ -61,7 +61,7 @@ namespace Kurisu
             foreach (var type in types)
             {
                 // get all properties with the ConVar attribute
-                var convars = type.GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVar), false).Any());
+                var convars = type.GetProperties().Where(property => property.GetCustomAttributes(typeof(ConVarAttribute), false).Any());
 
                 foreach (var property in convars)
                 {
