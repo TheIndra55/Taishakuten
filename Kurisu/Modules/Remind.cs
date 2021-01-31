@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -35,18 +36,26 @@ namespace Kurisu.Modules
         [Command("reminders"), Description("List all reminders.")]
         public async Task Reminders(CommandContext ctx)
         {
-            // get all reminders
+            // get reminders
             var reminders = await R.Table("reminders")
-                .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString())).RunCursorAsync<Reminder>(Program.Connection);
+                .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()))
+                .OrderBy(R.Desc("remind_at"))
+                .Limit(5)
+                .RunAtomAsync<List<Reminder>>(Program.Connection);
 
-            if (reminders.BufferedSize == 0)
+            if (reminders.Count == 0)
             {
                 await ctx.RespondAsync("You don't have any reminders.");
                 return;
             }
 
-            var response = string.Join("\n", reminders.Select(x => $"{x.At.Humanize(false)}: {x.Message}"));
-            await ctx.RespondAsync(response);
+            var embed = new DiscordEmbedBuilder()
+                .WithTitle("Closest 5 reminders")
+                .WithFooter("Use d!cancel to cancel any future reminder");
+
+            reminders.ForEach(x => embed.AddField(x.Message, x.At.Humanize(false)));
+
+            await ctx.RespondAsync(embed: embed.Build());
         }
 
         [Command("cancel"), Description("Cancel a reminder.")]

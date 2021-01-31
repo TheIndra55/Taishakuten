@@ -135,6 +135,8 @@ namespace Kurisu
 
             Client.Ready += async e =>
             {
+                Client.DebugLogger.LogMessage(LogLevel.Info, "Kurisu", $"Logged in as {e.Client.CurrentUser.Username}", DateTime.Now);
+
                 await Client.UpdateStatusAsync(new DiscordGame(Game));
             };
 
