@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using Kurisu.Configuration;
 using Kurisu.Models;
 using RethinkDb.Driver;
@@ -52,7 +53,24 @@ namespace Kurisu.Modules
                 }
                 catch(Exception ex)
                 {
+                    // fail
                     reminder.LastError = ex.Message;
+
+                    // fallback
+                    var user = ulong.Parse(reminder.UserId);
+
+                    try
+                    {
+                        // why not just expose this
+                        var apiClient = _client.GetType().GetProperty("ApiClient", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_client, null);
+                        var dm = await (Task<DiscordDmChannel>)apiClient.GetType().GetMethod("CreateDmAsync", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(apiClient, new object[] { user });
+
+                        await dm.SendMessageAsync($"⏰ It seems your reminder in <#{reminder.ChannelId}> failed, your reminder was: {reminder.Message}");
+                    }
+                    catch(Exception)
+                    {
+                        // well we tried everything
+                    }
                 }
 
                 // set is_fired to true and update record in database
