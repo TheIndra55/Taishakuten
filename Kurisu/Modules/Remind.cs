@@ -34,24 +34,39 @@ namespace Kurisu.Modules
         }
 
         [Command("reminders"), Description("List all reminders.")]
-        public async Task Reminders(CommandContext ctx)
+        public async Task Reminders(CommandContext ctx, string filter = null)
         {
             // get reminders
-            var reminders = await R.Table("reminders")
-                .Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()))
+            RethinkDb.Driver.Ast.Filter query = null;
+            if(filter != "all")
+            {
+                query = R.Table("reminders").Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()).And(x["guild_id"].Eq(ctx.Guild.Id.ToString())));
+            }
+            else
+            {
+                query = R.Table("reminders").Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()));
+            }
+
+            var reminders = await query
                 .OrderBy(R.Desc("remind_at"))
                 .Limit(5)
                 .RunAtomAsync<List<Reminder>>(Program.Connection);
 
             if (reminders.Count == 0)
             {
-                await ctx.RespondAsync("You don't have any reminders.");
+                await ctx.RespondAsync($"You don't have any reminders{(filter != "all" ? " in this guild" : "")}.");
                 return;
             }
 
+            var hints = new string[] { 
+                "Use d!cancel to cancel any future reminder",
+                "Use d!reminders all to see all your reminders across servers" };
+
+            var hint = filter == "all" ? hints[0] : hints[new Random().Next(0, hints.Length)];
+
             var embed = new DiscordEmbedBuilder()
-                .WithTitle("Closest 5 reminders")
-                .WithFooter("Use d!cancel to cancel any future reminder");
+                .WithTitle("Closest 5 reminders " + (filter == "all" ? "(all)" : "(guild)"))
+                .WithFooter(hint);
 
             reminders.ForEach(x => embed.AddField(x.Message, x.At.Humanize(false)));
 
