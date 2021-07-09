@@ -80,7 +80,10 @@ namespace Kurisu
                 return;
             }
 
-            ReadConfig("build.cfg");
+            if (File.Exists("build.cfg"))
+            {
+                ReadConfig("build.cfg");
+            }
 
             // execute launch file
             ReadConfig(args[0]);

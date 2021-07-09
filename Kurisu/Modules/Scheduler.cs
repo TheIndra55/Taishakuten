@@ -25,6 +25,15 @@ namespace Kurisu.Modules
         {
             _client = client;
 
+            if (!R.DbList().Contains(Program.Database).Run<bool>(Program.Connection))
+            {
+                R.DbCreate(Program.Database).Run(Program.Connection);
+            }
+            if (!R.TableList().Contains("reminders").Run<bool>(Program.Connection))
+            {
+                R.TableCreate("reminders").Run(Program.Connection);
+            }
+
             _timer = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
         }
 
