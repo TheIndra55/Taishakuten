@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kurisu.External.GoogleAssistant
 {
-    public class Assistant
+    public class Assistant : BaseCommandModule
     {
         // convars
         [ConVar("assistant_endpoint")]

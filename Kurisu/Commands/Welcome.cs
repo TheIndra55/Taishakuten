@@ -8,7 +8,7 @@ using RethinkDb.Driver;
 namespace Kurisu.Commands
 {
     [Group("welcome"), Aliases("joinmessage"), Description("Change properties for the welcome message"), RequireUserPermissions(Permissions.ManageGuild)]
-    class Welcome
+    class Welcome : BaseCommandModule
     {
         public RethinkDB R = RethinkDB.R;
 
@@ -21,7 +21,7 @@ namespace Kurisu.Commands
                 .WithTitle(string.Format(welcome.Header, ctx.User.Username))
                 .WithDescription(welcome.Body)
                 .WithColor(new DiscordColor(welcome.Color))
-                .WithThumbnailUrl(ctx.User.AvatarUrl)
+                .WithThumbnail(ctx.User.AvatarUrl)
                 .Build();
 
             await ctx.RespondAsync(embed: embed, content: welcome.Mention ? ctx.Member.Mention : null);

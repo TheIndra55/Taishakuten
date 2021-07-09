@@ -5,7 +5,7 @@ using Kurisu.Configuration;
 
 namespace Kurisu.Modules
 {
-    class Administration
+    class Administration : BaseCommandModule
     {
         [Command("convar"), RequireOwner]
         public async Task Convar(CommandContext ctx, string name, string value = null)

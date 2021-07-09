@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Kurisu.Modules
 {
-    class Information
+    class Information : BaseCommandModule
     {
         [ConVar("version")]
         public static string Version { get; set; }

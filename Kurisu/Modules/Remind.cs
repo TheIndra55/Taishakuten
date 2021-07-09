@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using Humanizer;
 using Kurisu.Models;
 using RethinkDb.Driver;
 
 namespace Kurisu.Modules
 {
-    class Remind
+    class Remind : BaseCommandModule
     {
         public static RethinkDB R = RethinkDB.R;
 
@@ -116,7 +114,7 @@ namespace Kurisu.Modules
                 .WithDescription(string.Join("\n", reminders.Select((v, i) => $"`{i}` {v.Message}")))
                 .Build();
 
-            await ctx.RespondAsync("Please type which reminder you want to cancel.", false, embed);
+            await ctx.RespondAsync("Please type which reminder you want to cancel.", embed);
 
             var interactivity = ctx.Client.GetInteractivityModule();
 

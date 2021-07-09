@@ -11,7 +11,7 @@ using RethinkDb.Driver;
 namespace Kurisu.Commands
 {
     [Group("virusscan"), Aliases("virustotal"), Description("Setup virus scanning for uploads on this guild"), RequireUserPermissions(Permissions.ManageGuild)]
-    class VirusScan
+    class VirusScan : BaseCommandModule
     {
         public RethinkDB R = RethinkDB.R;
 

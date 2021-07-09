@@ -26,11 +26,11 @@ namespace Kurisu
         public static RethinkDB R = RethinkDB.R;
 
         public static DiscordClient Client { get; private set; }
-        public static InteractivityModule Interactivity { get; private set; }
+        public static InteractivityExtension Interactivity { get; private set; }
 
         public static Connection Connection { get; private set; }
 
-        private static CommandsNextModule Commands { get; set; }
+        private static CommandsNextExtension Commands { get; set; }
 
         public static Dictionary<ulong, Guild> Guilds = new();
 
@@ -115,7 +115,7 @@ namespace Kurisu
             // initialize CommandsNext
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefix = Prefix,
+                StringPrefixes = new[] { Prefix },
                 EnableDms = false
             });
 

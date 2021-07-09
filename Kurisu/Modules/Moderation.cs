@@ -8,7 +8,7 @@ using DSharpPlus.CommandsNext.Attributes;
 
 namespace Kurisu.Modules
 {
-    class Moderation
+    class Moderation : BaseCommandModule
     {
         [Command("purge"), Aliases("clear"), Description("Clear multiple messages from the channel"), RequirePermissions(Permissions.ManageMessages)]
         public async Task Clear(CommandContext ctx, int messages = 0)
