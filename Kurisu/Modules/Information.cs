@@ -28,7 +28,7 @@ namespace Kurisu.Modules
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true)
                 .AddField("Source code", "https://github.com/TheIndra55/Kurisu")
-                .WithThumbnailUrl(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png));
+                .WithThumbnail(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png));
             if (shortVersion != null)
             {
                 embed.AddField("Version", $"[{shortVersion}](https://github.com/TheIndra55/Kurisu/commit/{Version})");
@@ -48,8 +48,8 @@ namespace Kurisu.Modules
                 .AddField("Owner", guild.Owner.Username)
                 .AddField("Members", guild.MemberCount.ToString())
                 .AddField("Age", $"{guild.CreationTimestamp.Humanize()} ({guild.CreationTimestamp:g})")
-                .AddField("Region", guild.RegionId)
-                .WithThumbnailUrl(guild.IconUrl)
+                .AddField("Region", guild.VoiceRegion.Id)
+                .WithThumbnail(guild.IconUrl)
                 .Build();
 
             await ctx.RespondAsync(embed: embed);
@@ -59,7 +59,7 @@ namespace Kurisu.Modules
         public async Task User(CommandContext ctx, DiscordMember user)
         {
             var mutual =
-                ctx.Client.Guilds.Where(guild => guild.Value.Members.Any(member => member.Id == user.Id)).ToList();
+                ctx.Client.Guilds.Where(guild => guild.Value.Members.Any(member => member.Key == user.Id)).ToList();
 
             var embed = new DiscordEmbedBuilder()
                 .WithTitle($"{user.Username}#{user.Discriminator}")
@@ -67,7 +67,7 @@ namespace Kurisu.Modules
                 .AddField("Account creation", $"{user.CreationTimestamp.Humanize()} ({user.CreationTimestamp:g})")
                 .AddField("Guild join", $"{user.JoinedAt.Humanize()} ({user.JoinedAt:g})")
                 .AddField("Roles", string.Join(", ", user.Roles.Select(x => $"`{x.Name}`")))
-                .WithThumbnailUrl(user.AvatarUrl);
+                .WithThumbnail(user.AvatarUrl);
 
             if (mutual.Any())
             {

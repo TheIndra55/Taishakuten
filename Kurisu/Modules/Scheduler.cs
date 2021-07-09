@@ -11,7 +11,7 @@ using RethinkDb.Driver.Net;
 
 namespace Kurisu.Modules
 {
-    class Scheduler : BaseModule
+    class Scheduler : BaseExtension
     {
         public static RethinkDB R = RethinkDB.R;
 

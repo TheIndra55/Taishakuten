@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
-using Kurisu.Configuration;
 using Kurisu.External.HybridAnalysis;
 using Kurisu.External.VirusTotal;
 using Kurisu.Scan;
@@ -15,7 +14,7 @@ using Kurisu.VirusScan;
 
 namespace Kurisu.Modules
 {
-    class Scan : BaseModule
+    class Scan : BaseExtension
     {
         private DiscordClient _client;
         private List<IScan> _scans;
@@ -33,7 +32,7 @@ namespace Kurisu.Modules
             };
         }
 
-        private async Task MessageCreated(MessageCreateEventArgs e)
+        private async Task MessageCreated(DiscordClient _, MessageCreateEventArgs e)
         {
             var guild = Program.Guilds[e.Guild.Id];
 

@@ -16,6 +16,7 @@ using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
 using System.Reflection;
 using Kurisu.External.GoogleAssistant;
+using Microsoft.Extensions.Logging;
 
 namespace Kurisu
 {
@@ -102,15 +103,14 @@ namespace Kurisu
             {
                 Token = Token,
                 TokenType = TokenType.Bot,
-                LogLevel = LogLevel.Debug,
-                UseInternalLogHandler = true
+                MinimumLogLevel = LogLevel.Debug
             });
 
             Interactivity = Client.UseInteractivity(new InteractivityConfiguration());
 
             // setup modules
-            Client.AddModule(new Scheduler());
-            Client.AddModule(new Modules.Scan());
+            Client.AddExtension(new Scheduler());
+            Client.AddExtension(new Modules.Scan());
 
             // initialize CommandsNext
             Commands = Client.UseCommandsNext(new CommandsNextConfiguration
@@ -129,18 +129,18 @@ namespace Kurisu
             Commands.RegisterCommands<Commands.VirusScan>();
             Commands.RegisterCommands<Assistant>();
 
-            Commands.CommandErrored += async e =>
+            Commands.CommandErrored += async (_, e) =>
             {
                 if (e.Exception is CommandNotFoundException) return;
 
                 await e.Context.RespondAsync($"An error occured while executing the command:\n`{e.Exception.Message}`");
             };
 
-            Client.Ready += async e =>
+            Client.Ready += async (c, e) =>
             {
-                Client.DebugLogger.LogMessage(LogLevel.Info, "Kurisu", $"Logged in as {e.Client.CurrentUser.Username}", DateTime.Now);
+                Client.Logger.LogInformation("Kurisu", $"Logged in as {c.CurrentUser.Username}", DateTime.Now);
 
-                await Client.UpdateStatusAsync(new DiscordGame(Game));
+                await Client.UpdateStatusAsync(new(Game, ActivityType.Playing));
             };
 
             Client.GuildMemberAdded += GuildMemberAdded;
@@ -154,7 +154,7 @@ namespace Kurisu
         /// <summary>
         /// Triggered when an user join a guild
         /// </summary>
-        private static async Task GuildMemberAdded(GuildMemberAddEventArgs e)
+        private static async Task GuildMemberAdded(DiscordClient _, GuildMemberAddEventArgs e)
         {
             var welcome = Guilds[e.Guild.Id].Welcome;
             if (welcome.Channel == null) return;
@@ -166,7 +166,7 @@ namespace Kurisu
                 .WithTitle(string.Format(welcome.Header, e.Member.Username))
                 .WithDescription(welcome.Body)
                 .WithColor(new DiscordColor(welcome.Color))
-                .WithThumbnailUrl(e.Member.AvatarUrl)
+                .WithThumbnail(e.Member.AvatarUrl)
                 .Build();
 
             await channel.SendMessageAsync(embed: embed, content: welcome.Mention ? e.Member.Mention : null);
@@ -175,7 +175,7 @@ namespace Kurisu
         /// <summary>
         /// Triggered when a new guild has become available
         /// </summary>
-        private static async Task GuildAvailable(GuildCreateEventArgs e)
+        private static async Task GuildAvailable(DiscordClient _, GuildCreateEventArgs e)
         {
             // check if guild exists in the database
             var guild = await R.Table("guilds").Get(e.Guild.Id.ToString()).RunResultAsync<Guild>(Connection);
