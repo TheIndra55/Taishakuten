@@ -72,7 +72,7 @@ namespace Kurisu.Modules
             if (mutual.Any())
             {
                 // show all guilds the bot and user share
-                embed.AddField($"Mutual guilds ({mutual.Count()})", string.Join(", ", mutual.Select(x => $"`{x.Value.Name}`").Take(5)));
+                embed.AddField($"Mutual guilds ({mutual.Count})", string.Join(", ", mutual.Select(x => $"`{x.Value.Name}`").Take(5)));
             }
 
             await ctx.RespondAsync(embed: embed.Build());

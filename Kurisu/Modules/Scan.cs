@@ -95,25 +95,21 @@ namespace Kurisu.Modules
 
         private async Task<DownloadedFile> GetFile(string url)
         {
-            using (var client = new HttpClient())
+            using var client = new HttpClient();
+            var response = await client.GetStreamAsync(url);
+            var stream = new MemoryStream();
+
+            response.CopyTo(stream);
+            stream.Position = 0;
+
+            using var sha1 = SHA256.Create();
+            var hash = sha1.ComputeHash(stream);
+
+            return new DownloadedFile()
             {
-                var response = await client.GetStreamAsync(url);
-                var stream = new MemoryStream();
-
-                response.CopyTo(stream);
-                stream.Position = 0;
-
-                using (var sha1 = SHA256.Create())
-                {
-                    var hash = sha1.ComputeHash(stream);
-
-                    return new DownloadedFile()
-                    {
-                        Hash = string.Join(null, hash.Select(x => x.ToString("x2"))),
-                        Stream = stream
-                    };
-                }
-            }
+                Hash = string.Join(null, hash.Select(x => x.ToString("x2"))),
+                Stream = stream
+            };
         }
 
         private struct DownloadedFile

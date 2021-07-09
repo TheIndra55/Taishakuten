@@ -31,7 +31,7 @@ namespace Kurisu
 
         private static CommandsNextModule Commands { get; set; }
 
-        public static Dictionary<ulong, Guild> Guilds = new Dictionary<ulong, Guild>();
+        public static Dictionary<ulong, Guild> Guilds = new();
 
         // convars
         [ConVar("token", HelpText = "The bot token")]

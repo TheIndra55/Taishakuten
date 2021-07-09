@@ -16,7 +16,6 @@ namespace Kurisu.Modules
         public static RethinkDB R = RethinkDB.R;
 
         private DiscordClient _client;
-        private Timer _timer;
 
         [ConVar("scheduler_timeout", HelpText = "The time between polling the database for reminders")]
         public static int Timeout { get; set; } = 30;
@@ -34,7 +33,7 @@ namespace Kurisu.Modules
                 R.TableCreate("reminders").Run(Program.Connection);
             }
 
-            _timer = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
+            _ = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
         }
 
         private async void Poll(object state)
