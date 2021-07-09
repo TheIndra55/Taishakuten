@@ -20,7 +20,7 @@ namespace Kurisu.Modules
         [Command("about"), Aliases("info"), Description("Show information about the bot")]
         public async Task About(CommandContext ctx)
         {
-            var shortVersion = Version.Substring(0, 7);
+            var shortVersion = Version?.Substring(0, 7);
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Client.CurrentUser.Username)
                 .AddField("Author", "TheIndra", true)
@@ -28,8 +28,11 @@ namespace Kurisu.Modules
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true)
                 .AddField("Source code", "https://github.com/TheIndra55/Kurisu")
-                .AddField("Version", $"[{shortVersion}](https://github.com/TheIndra55/Kurisu/commit/{Version})")
                 .WithThumbnailUrl(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png));
+            if (shortVersion != null)
+            {
+                embed.AddField("Version", $"[{shortVersion}](https://github.com/TheIndra55/Kurisu/commit/{Version})");
+            }
 
             await ctx.RespondAsync(embed: embed);
         }
