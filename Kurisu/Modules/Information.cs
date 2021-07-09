@@ -23,7 +23,7 @@ namespace Kurisu.Modules
             var shortVersion = Version?.Substring(0, 7);
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Client.CurrentUser.Username)
-                .AddField("Author", "TheIndra", true)
+                .AddField("Contributors", "TheIndra, Xwilarg", true)
                 .AddField("Library", "DSharpPlus", true)
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true)
@@ -79,8 +79,13 @@ namespace Kurisu.Modules
         }
 
         [Command("avatar"), Aliases("pf", "pic"), Description("Shows the user's avatar")]
-        public async Task Avatar(CommandContext ctx, DiscordUser user)
+        public async Task Avatar(CommandContext ctx, DiscordUser user = null)
         {
+            if(user == null)
+            {
+                user = ctx.User;
+            }
+
             var embed = new DiscordEmbedBuilder()
                 .WithTitle($"Avatar of {user.Username}")
                 .WithImageUrl(user.AvatarUrl)

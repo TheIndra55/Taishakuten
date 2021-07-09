@@ -104,7 +104,8 @@ namespace Kurisu
             {
                 Token = Token,
                 TokenType = TokenType.Bot,
-                MinimumLogLevel = LogLevel.Debug
+                MinimumLogLevel = LogLevel.Debug,
+                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers // required for welcome messages
             });
 
             Interactivity = Client.UseInteractivity(new InteractivityConfiguration());
@@ -119,6 +120,9 @@ namespace Kurisu
                 StringPrefixes = new[] { Prefix },
                 EnableDms = false
             });
+
+            Client.GuildMemberAdded += GuildMemberAdded;
+            Client.GuildAvailable += GuildAvailable;
 
             // register commands
             Commands.RegisterCommands<Administration>();
@@ -139,13 +143,10 @@ namespace Kurisu
 
             Client.Ready += async (c, e) =>
             {
-                Client.Logger.LogInformation("Kurisu", $"Logged in as {c.CurrentUser.Username}", DateTime.Now);
+                Client.Logger.LogInformation($"Logged in as {c.CurrentUser.Username}");
 
                 await Client.UpdateStatusAsync(new(Game, ActivityType.Playing));
             };
-
-            Client.GuildMemberAdded += GuildMemberAdded;
-            Client.GuildAvailable += GuildAvailable;
 
             // start bot
             await Client.ConnectAsync();
