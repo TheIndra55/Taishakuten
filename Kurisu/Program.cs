@@ -17,6 +17,7 @@ using RethinkDb.Driver.Net;
 using System.Reflection;
 using Kurisu.External.GoogleAssistant;
 using Microsoft.Extensions.Logging;
+using DSharpPlus.Interactivity.Extensions;
 
 namespace Kurisu
 {

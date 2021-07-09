@@ -1,5 +1,6 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using Google.Apis.Auth.OAuth2;
 using Google.Assistant.Embedded.V1Alpha2;
 using Grpc.Auth;
@@ -82,7 +83,9 @@ namespace Kurisu.External.GoogleAssistant
             }
             audioStream.Position = 0;
 
-            await ctx.RespondWithFileAsync(audioStream, file_name: "response.ogg", content: response.DialogStateOut?.SupplementalDisplayText);
+            await ctx.RespondAsync(new DiscordMessageBuilder()
+                .WithFile(fileName: "response.ogg", stream: audioStream)
+                .WithContent(response.DialogStateOut?.SupplementalDisplayText));
             audioStream.Dispose();
         }
 
@@ -97,18 +100,19 @@ namespace Kurisu.External.GoogleAssistant
 
         private AssistConfig CreateConfig(string language = "en-US")
         {
-            var config = new AssistConfig();
-
-            config.AudioOutConfig = AudioOutConfig;
-            config.DialogStateIn = new DialogStateIn
+            var config = new AssistConfig
             {
-                LanguageCode = language
-            };
+                AudioOutConfig = AudioOutConfig,
+                DialogStateIn = new DialogStateIn
+                {
+                    LanguageCode = language
+                },
 
-            config.DeviceConfig = new DeviceConfig
-            {
-                DeviceModelId = DeviceModelId,
-                DeviceId = DeviceId
+                DeviceConfig = new DeviceConfig
+                {
+                    DeviceModelId = DeviceModelId,
+                    DeviceId = DeviceId
+                }
             };
 
             return config;

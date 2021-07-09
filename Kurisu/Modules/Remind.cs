@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Extensions;
 using Humanizer;
 using Kurisu.Models;
 using RethinkDb.Driver;
@@ -31,7 +32,7 @@ namespace Kurisu.Modules
             await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
         }
 
-        [Command("remindme"), Aliases("reminder", "remind"), Description("Set a reminder")]
+        [Command("remindme"), Description("Set a reminder")]
         public async Task Reminder(CommandContext ctx, [Description("The date when to be reminded")] DateTime date, [RemainingText, Description("Description about the reminder")] string message = "")
         {
             if (date < DateTime.Now)
@@ -116,14 +117,14 @@ namespace Kurisu.Modules
 
             await ctx.RespondAsync("Please type which reminder you want to cancel.", embed);
 
-            var interactivity = ctx.Client.GetInteractivityModule();
+            var interactivity = ctx.Client.GetInteractivity();
 
             // wait for user response with an integer
-            var msg = await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && int.TryParse(m.Content, out _), TimeSpan.FromMinutes(1));
+            var msg = (await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && int.TryParse(m.Content, out _), TimeSpan.FromMinutes(1))).Result;
             if (msg != null)
             {
                 // get the reminder which user wants to cancel
-                var reminder = items.ElementAtOrDefault(int.Parse(msg.Message.Content));
+                var reminder = items.ElementAtOrDefault(int.Parse(msg.Content));
                 if (reminder == null)
                 {
                     await ctx.RespondAsync("That item doesn't exist");
