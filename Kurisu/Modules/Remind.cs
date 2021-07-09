@@ -29,7 +29,30 @@ namespace Kurisu.Modules
                 At = DateTime.Now + offset
             };
 
-            var cursor = await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
+            await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
+            await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
+        }
+
+        [Command("remindme"), Aliases("reminder", "remind"), Description("Set a reminder")]
+        public async Task Reminder(CommandContext ctx, [Description("The date when to be reminded")] DateTime date, [RemainingText, Description("Description about the reminder")] string message = "")
+        {
+            if (date < DateTime.Now)
+            {
+                throw new ArgumentException("Date given in parameter must be in the futur", nameof(date));
+            }
+
+            var reminder = new Reminder
+            {
+                Message = message,
+                ChannelId = ctx.Channel.Id.ToString(),
+                GuildId = ctx.Guild.Id.ToString(),
+                UserId = ctx.User.Id.ToString(),
+                At = date
+            };
+
+            var offset = date - DateTime.Now;
+
+            await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
             await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
         }
 
