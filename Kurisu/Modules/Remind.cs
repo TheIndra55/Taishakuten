@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using Humanizer;
 using Kurisu.Models;
 using RethinkDb.Driver;
 
 namespace Kurisu.Modules
 {
-    class Remind
+    class Remind : BaseCommandModule
     {
         public static RethinkDB R = RethinkDB.R;
 
@@ -29,7 +28,30 @@ namespace Kurisu.Modules
                 At = DateTime.Now + offset
             };
 
-            var cursor = await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
+            await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
+            await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
+        }
+
+        [Command("remindme"), Description("Set a reminder")]
+        public async Task Reminder(CommandContext ctx, [Description("The date when to be reminded")] DateTime date, [RemainingText, Description("Description about the reminder")] string message = "")
+        {
+            if (date < DateTime.Now)
+            {
+                throw new ArgumentException("Date given in parameter must be in the futur", nameof(date));
+            }
+
+            var reminder = new Reminder
+            {
+                Message = message,
+                ChannelId = ctx.Channel.Id.ToString(),
+                GuildId = ctx.Guild.Id.ToString(),
+                UserId = ctx.User.Id.ToString(),
+                At = date
+            };
+
+            var offset = date - DateTime.Now;
+
+            await R.Table("reminders").Insert(reminder).RunAsync(Program.Connection);
             await ctx.RespondAsync($"⏰ Timer set for {offset.Humanize(2)}.");
         }
 
@@ -93,16 +115,16 @@ namespace Kurisu.Modules
                 .WithDescription(string.Join("\n", reminders.Select((v, i) => $"`{i}` {v.Message}")))
                 .Build();
 
-            await ctx.RespondAsync("Please type which reminder you want to cancel.", false, embed);
+            await ctx.RespondAsync("Please type which reminder you want to cancel.", embed);
 
-            var interactivity = ctx.Client.GetInteractivityModule();
+            var interactivity = ctx.Client.GetInteractivity();
 
             // wait for user response with an integer
-            var msg = await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && int.TryParse(m.Content, out _), TimeSpan.FromMinutes(1));
+            var msg = (await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && int.TryParse(m.Content, out _), TimeSpan.FromMinutes(1))).Result;
             if (msg != null)
             {
                 // get the reminder which user wants to cancel
-                var reminder = items.ElementAtOrDefault(int.Parse(msg.Message.Content));
+                var reminder = items.ElementAtOrDefault(int.Parse(msg.Content));
                 if (reminder == null)
                 {
                     await ctx.RespondAsync("That item doesn't exist");

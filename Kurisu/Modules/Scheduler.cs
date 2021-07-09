@@ -11,12 +11,11 @@ using RethinkDb.Driver.Net;
 
 namespace Kurisu.Modules
 {
-    class Scheduler : BaseModule
+    class Scheduler : BaseExtension
     {
         public static RethinkDB R = RethinkDB.R;
 
         private DiscordClient _client;
-        private Timer _timer;
 
         [ConVar("scheduler_timeout", HelpText = "The time between polling the database for reminders")]
         public static int Timeout { get; set; } = 30;
@@ -25,7 +24,16 @@ namespace Kurisu.Modules
         {
             _client = client;
 
-            _timer = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
+            if (!R.DbList().Contains(Program.Database).Run<bool>(Program.Connection))
+            {
+                R.DbCreate(Program.Database).Run(Program.Connection);
+            }
+            if (!R.TableList().Contains("reminders").Run<bool>(Program.Connection))
+            {
+                R.TableCreate("reminders").Run(Program.Connection);
+            }
+
+            _ = new Timer(Poll, null, 0, (int)TimeSpan.FromSeconds(Timeout).TotalMilliseconds);
         }
 
         private async void Poll(object state)

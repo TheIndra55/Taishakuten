@@ -4,7 +4,7 @@ Kurisu is a simple bot containing all features needed to moderate my and friend'
 
 ## Setup
 
-Make sure you have .NET Core 3.1 installed and build Kurisu
+Make sure you have .NET 5 installed and build Kurisu
 ```powershell
 dotnet build
 ```
