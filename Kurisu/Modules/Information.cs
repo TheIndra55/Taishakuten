@@ -79,16 +79,18 @@ namespace Kurisu.Modules
         }
 
         [Command("avatar"), Aliases("pf", "pic"), Description("Shows the user's avatar")]
-        public async Task Avatar(CommandContext ctx, DiscordUser user = null)
+        public async Task Avatar(CommandContext ctx, DiscordMember user = null, string kind = "guild")
         {
             if(user == null)
             {
-                user = ctx.User;
+                user = ctx.Member;
             }
+
+            var avatar = (user.GuildAvatarHash != user.AvatarHash && kind != "user") ? user.GuildAvatarUrl : user.AvatarUrl;
 
             var embed = new DiscordEmbedBuilder()
                 .WithTitle($"Avatar of {user.Username}")
-                .WithImageUrl(user.AvatarUrl)
+                .WithImageUrl(avatar)
                 .Build();
 
             await ctx.RespondAsync(embed: embed);
