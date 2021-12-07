@@ -48,7 +48,7 @@ namespace Kurisu.Modules
                 .AddField("Owner", guild.Owner.Username)
                 .AddField("Members", guild.MemberCount.ToString())
                 .AddField("Age", $"{guild.CreationTimestamp.Humanize()} ({guild.CreationTimestamp:g})")
-                .AddField("Region", guild.VoiceRegion.Id)
+                //.AddField("Region", guild.VoiceRegion.Id)
                 .WithThumbnail(guild.IconUrl)
                 .Build();
 
