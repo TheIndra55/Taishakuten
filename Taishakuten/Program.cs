@@ -52,6 +52,7 @@ namespace Taishakuten
 
             slash.RegisterCommands<Info>(832001341865197579);
             slash.RegisterCommands<Remind>(832001341865197579);
+            slash.RegisterCommands<Reminders>(832001341865197579);
 
             await client.ConnectAsync();
             await Task.Delay(-1);
