@@ -31,6 +31,10 @@ namespace Taishakuten
 
             var config = JsonSerializer.Deserialize<Configuration>(File.ReadAllText(path));
 
+            // database stuff
+            var database = new DatabaseContext(config.ConnectionString);
+
+            // setup discord 
             var client = new DiscordClient(new DiscordConfiguration
             {
                 Token = config.Token,
@@ -42,10 +46,12 @@ namespace Taishakuten
                 // inject config to commands
                 Services = new ServiceCollection()
                     .AddSingleton(config)
+                    .AddSingleton(database)
                     .BuildServiceProvider()
             });
 
             slash.RegisterCommands<Info>(832001341865197579);
+            slash.RegisterCommands<Remind>(832001341865197579);
 
             await client.ConnectAsync();
             await Task.Delay(-1);

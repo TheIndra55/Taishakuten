@@ -14,5 +14,8 @@ namespace Taishakuten.Entities
 
         [JsonPropertyName("version")]
         public string Version { get; set; }
+
+        [JsonPropertyName("connection_string")]
+        public string ConnectionString { get; set; }
     }
 }
