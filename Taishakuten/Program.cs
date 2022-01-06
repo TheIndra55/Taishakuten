@@ -8,6 +8,7 @@ using System;
 using System.Text.Json;
 using Taishakuten.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using DSharpPlus.SlashCommands.Attributes;
 
 namespace Taishakuten
 {
@@ -50,9 +51,22 @@ namespace Taishakuten
                     .BuildServiceProvider()
             });
 
-            slash.RegisterCommands<Info>(832001341865197579);
-            slash.RegisterCommands<Remind>(832001341865197579);
-            slash.RegisterCommands<Reminders>(832001341865197579);
+            slash.SlashCommandErrored += async (sender, args) =>
+            {
+                if (args.Exception is SlashExecutionChecksFailedException failed)
+                {
+                    var check = failed.FailedChecks[0];
+
+                    if (check is SlashRequirePermissionsAttribute)
+                        await args.Context.CreateResponseAsync("Bot or user lacks permission for this command", true);
+                }
+            };
+
+            // register slash commands
+            slash.RegisterCommands<Info>(config.Guild);
+            slash.RegisterCommands<Remind>(config.Guild);
+            slash.RegisterCommands<Reminders>(config.Guild);
+            slash.RegisterCommands<Moderation>(config.Guild);
 
             await client.ConnectAsync();
             await Task.Delay(-1);

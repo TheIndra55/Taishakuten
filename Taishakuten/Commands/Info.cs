@@ -37,7 +37,7 @@ namespace Taishakuten.Commands
             await ctx.CreateResponseAsync(embed);
         }
 
-        [SlashCommand("ping", "See the bot's response time")]
+        [SlashCommand("ping", "Get the bot's response time")]
         public async Task AvatarCommand(InteractionContext ctx)
         {
             await ctx.CreateResponseAsync("Pong!");

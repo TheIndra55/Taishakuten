@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Taishakuten.Entities
 {
@@ -17,5 +12,9 @@ namespace Taishakuten.Entities
 
         [JsonPropertyName("connection_string")]
         public string ConnectionString { get; set; }
+
+        // don't set this property to register commands globally
+        [JsonPropertyName("commands_guild")]
+        public ulong? Guild { get; set; }
     }
 }

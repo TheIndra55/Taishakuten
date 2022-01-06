@@ -20,7 +20,7 @@ namespace Taishakuten.Commands
 
         [SlashCommand("remindme", "Set a reminder")]
         public async Task RemindCommand(InteractionContext ctx,
-            [Option("span", "The amount of time in which to remind")] TimeSpan? span,
+            [Option("timespan", "The amount of time in which to remind")] TimeSpan? span,
             [Option("message", "The message to get reminded about")] string message)
         {
             if (span == null)
