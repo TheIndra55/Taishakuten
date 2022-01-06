@@ -9,6 +9,8 @@ using System.Text.Json;
 using Taishakuten.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using DSharpPlus.SlashCommands.Attributes;
+using Taishakuten.Modules;
+using Microsoft.EntityFrameworkCore;
 
 namespace Taishakuten
 {
@@ -32,8 +34,12 @@ namespace Taishakuten
 
             var config = JsonSerializer.Deserialize<Configuration>(File.ReadAllText(path));
 
-            // database stuff
-            var database = new DatabaseContext(config.ConnectionString);
+            // setup database context
+            var serverVersion = ServerVersion.AutoDetect(config.ConnectionString);
+
+            var database = new DbContextOptionsBuilder<DatabaseContext>()
+                .UseMySql(config.ConnectionString, serverVersion)
+                .Options;
 
             // setup discord 
             var client = new DiscordClient(new DiscordConfiguration
@@ -42,12 +48,16 @@ namespace Taishakuten
                 MinimumLogLevel = LogLevel.Debug
             });
 
+            var scheduler = new Scheduler(new DatabaseContext(database));
+            client.AddExtension(scheduler);
+
             var slash = client.UseSlashCommands(new SlashCommandsConfiguration
             {
-                // inject config to commands
+                // inject config and database to commands
                 Services = new ServiceCollection()
                     .AddSingleton(config)
-                    .AddSingleton(database)
+                    // not sure how to pass DbContextOptionsBuilder here
+                    .AddDbContext<DatabaseContext>(options => options.UseMySql(config.ConnectionString, serverVersion))
                     .BuildServiceProvider()
             });
 
@@ -59,7 +69,11 @@ namespace Taishakuten
 
                     if (check is SlashRequirePermissionsAttribute)
                         await args.Context.CreateResponseAsync("Bot or user lacks permission for this command", true);
+
+                    return;
                 }
+
+                await args.Context.Channel.SendMessageAsync("An error occurred while executing the command:\n```" + args.Exception.Message + "```");
             };
 
             // register slash commands
