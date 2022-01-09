@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DSharpPlus.Entities;
 
 namespace Taishakuten.Modules
 {
@@ -43,7 +44,11 @@ namespace Taishakuten.Modules
                     var channel = await _client.GetChannelAsync(reminder.Channel);
                     var user = await _client.GetUserAsync(reminder.User);
 
-                    await channel.SendMessageAsync($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.");
+                    var message = new DiscordMessageBuilder()
+                        .WithContent($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.")
+                        .WithAllowedMention(new UserMention(user));
+
+                    await channel.SendMessageAsync(message);
                 }
                 catch(Exception e)
                 {
