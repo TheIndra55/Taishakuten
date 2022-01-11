@@ -7,6 +7,8 @@ namespace Taishakuten
     {
         public DbSet<Reminder> Reminders { get; set; }
 
+        public DbSet<Welcome> Welcomes { get; set; }
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {

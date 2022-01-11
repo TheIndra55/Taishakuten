@@ -5,12 +5,15 @@ using Microsoft.Extensions.Logging;
 using Taishakuten.Commands;
 using System.IO;
 using System;
+using System.Linq;
 using System.Text.Json;
 using Taishakuten.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using DSharpPlus.SlashCommands.Attributes;
 using Taishakuten.Modules;
 using Microsoft.EntityFrameworkCore;
+using DSharpPlus.EventArgs;
+using DSharpPlus.Entities;
 
 namespace Taishakuten
 {
@@ -20,6 +23,8 @@ namespace Taishakuten
         {
             await new Program().MainAsync(args);
         }
+
+        private DbContextOptions<DatabaseContext> _context;
 
         public async Task MainAsync(string[] args)
         {
@@ -37,7 +42,7 @@ namespace Taishakuten
             // setup database context
             var serverVersion = ServerVersion.AutoDetect(config.ConnectionString);
 
-            var database = new DbContextOptionsBuilder<DatabaseContext>()
+            _context = new DbContextOptionsBuilder<DatabaseContext>()
                 .UseMySql(config.ConnectionString, serverVersion)
                 .Options;
 
@@ -45,10 +50,14 @@ namespace Taishakuten
             var client = new DiscordClient(new DiscordConfiguration
             {
                 Token = config.Token,
-                MinimumLogLevel = LogLevel.Debug
+                MinimumLogLevel = LogLevel.Debug,
+
+                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers
             });
 
-            var scheduler = new Scheduler(new DatabaseContext(database));
+            client.GuildMemberAdded += GuildMemberAdded;
+
+            var scheduler = new Scheduler(new DatabaseContext(_context));
             client.AddExtension(scheduler);
 
             var slash = client.UseSlashCommands(new SlashCommandsConfiguration
@@ -84,6 +93,33 @@ namespace Taishakuten
 
             await client.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private async Task GuildMemberAdded(DiscordClient sender, GuildMemberAddEventArgs e)
+        {
+            using var db = new DatabaseContext(_context);
+
+            // fetch the welcome message for this guild
+            var welcome = db.Welcomes.FirstOrDefault(x => x.Guild == e.Guild.Id);
+            if (welcome == default) return;
+
+            var channel = e.Guild.GetChannel(welcome.Channel);
+            if (channel == null) return;
+
+            Func<string, string> format = (text) =>
+            {
+                // {0} is username, {1} is id, {2} is mention
+                return string.Format(text, e.Member.Username, e.Member.Id, e.Member.Mention);
+            };
+
+            // build embed and format body and title
+            var embed = new DiscordEmbedBuilder()
+                .WithTitle(format(welcome.Title))
+                .WithDescription(format(welcome.Body))
+                .WithColor(welcome.Color)
+                .WithThumbnail(e.Member.AvatarUrl);
+
+            await channel.SendMessageAsync(welcome.Mention ? e.Member.Mention : "", embed);
         }
     }
 }
