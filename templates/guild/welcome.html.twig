@@ -1,0 +1,92 @@
+{% extends "base.html.twig" %}
+
+{% block stylesheets %}
+    <style>
+        // style taken from discord
+        .embed {
+            border-left: 4px solid #{{ embed_color }};
+            background: #f2f3f5;
+            border-radius: 4px;
+        }
+
+        .embed > .body {
+            padding: .5rem 1rem 1rem .75rem;
+            display: inline-grid;
+        }
+
+        .embed > .body > .title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .embed > .body > img {
+            grid-row: 1/8;
+            grid-column: 2/2;
+            margin-left: 16px;
+            margin-top: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            float: right;
+        }
+
+        .mention {
+            padding: 0 2px;
+            color: #5865F2;
+            background: #e6e8fd;
+            display: inline;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    {{ form(form) }}
+                </div>
+                <div class="col">
+                    <div class="mention" {% if not welcome.mention %}style="display: none;{% endif %}">@User</div>
+                    <div class="embed">
+                        <div class="body">
+                            <div class="title" id="form[title]">{{ welcome.title }}</div>
+                            <div class="body" id="form[body]">{{ welcome.body }}</div>
+                            <img src="https://i.imgur.com/B0CmfLT.png"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Variables</h5>
+            <p>You can use the following variables in the title and body</p>
+            <code>{0}</code> The username of the user<br>
+            <code>{1}</code> The id of the user<br>
+            <code>{2}</code> The mention of the user<br>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll("input").forEach(element => element.addEventListener("input", event => {
+            const input = event.target
+
+            if (input.name == "form[color]") {
+                document.querySelector(".embed").style.borderLeft = "4px solid " + input.value
+            } else if (input.name == "form[mention]") {
+                document.querySelector(".mention").style.display = input.checked ? "inline" : "none"
+            } else {
+                const elem = document.getElementById(input.name)
+
+                elem.innerHTML = input.value
+                    .replace("{0}", "User")
+                    .replace("{1}", "599201977276039169")
+                    .replace("{2}", "<span class=\"mention\">@User</span>")
+            }
+        }))
+    </script>
+{% endblock %}
