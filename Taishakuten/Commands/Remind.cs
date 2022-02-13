@@ -45,6 +45,32 @@ namespace Taishakuten.Commands
 
             await ctx.CreateResponseAsync($"⏰ Timer set for {span.Value.Humanize(2)}.");
         }
+
+        [SlashCommand("snooze", "Snooze the last reminder")]
+        public async Task SnoozeCommand(InteractionContext ctx, [Option("timespan", "The amount of time to snooze")] TimeSpan? span)
+        {
+            if (span == null)
+            {
+                await ctx.CreateResponseAsync($"The time span is not valid, try for example '3d 4h' to remind in 3 days and 4 hours", true);
+                return;
+            }
+
+            var reminder = _db.Reminders.Where(x => x.Fired && x.User == ctx.User.Id).OrderByDescending(x => x.At).FirstOrDefault();
+
+            if (reminder == default)
+            {
+                await ctx.CreateResponseAsync("You have no recent reminders to snooze", true);
+                return;
+            }
+
+            reminder.Snoozes++;
+            reminder.Fired = false;
+            reminder.At = DateTime.Now + span.Value;
+
+            _db.SaveChanges();
+
+            await ctx.CreateResponseAsync($"⏰ Timer snoozed for {span.Value.Humanize(2)}.");
+        }
     }
 
     [SlashCommandGroup("reminders", "Manage all your reminders")]

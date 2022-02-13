@@ -29,5 +29,7 @@ namespace Taishakuten.Entities
 
         [MaxLength(500)]
         public string LastError { get; set; } = null;
+
+        public int Snoozes { get; set; }
     }
 }
