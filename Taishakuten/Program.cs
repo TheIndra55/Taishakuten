@@ -61,6 +61,9 @@ namespace Taishakuten
             var scheduler = new Scheduler(new DatabaseContext(_context));
             client.AddExtension(scheduler);
 
+            var scan = new Scan();
+            client.AddExtension(scan);
+
             var slash = client.UseSlashCommands(new SlashCommandsConfiguration
             {
                 // inject config and database to commands
