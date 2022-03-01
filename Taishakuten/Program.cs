@@ -14,6 +14,7 @@ using Taishakuten.Modules;
 using Microsoft.EntityFrameworkCore;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 
 namespace Taishakuten
 {
@@ -79,6 +80,11 @@ namespace Taishakuten
                     if (check is SlashRequirePermissionsAttribute)
                         await args.Context.CreateResponseAsync("Bot or user lacks permission for this command", true);
 
+                    return;
+                }
+
+                if (args.Exception is NotFoundException)
+                {
                     return;
                 }
 

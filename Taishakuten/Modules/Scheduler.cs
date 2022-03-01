@@ -56,6 +56,7 @@ namespace Taishakuten.Modules
                 }
 
                 reminder.Fired = true;
+                _db.Entry(reminder).Property(x => x.Fired).IsModified = true;
             }
 
             _db.SaveChanges();

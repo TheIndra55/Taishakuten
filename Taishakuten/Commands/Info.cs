@@ -24,10 +24,9 @@ namespace Taishakuten.Commands
         {
             var embed = new DiscordEmbedBuilder()
                 .WithTitle(ctx.Client.CurrentUser.Username)
-                .AddField("Contributors", "TheIndra, Xwilarg", true)
-                .AddField("Library", "DSharpPlus", true)
                 .AddField("Guilds", ctx.Client.Guilds.Count.ToString(), true)
                 .AddField("Uptime", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), true)
+                .AddField("Contributors", "TheIndra, Xwilarg")
                 .AddField("Source code", "https://github.com/TheIndra55/Kurisu")
                 .WithThumbnail(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png));
 
@@ -76,7 +75,7 @@ namespace Taishakuten.Commands
             var embed = new DiscordEmbedBuilder()
                 .WithTitle($"{user.Username}#{user.Discriminator}")
                 .WithDescription(user.Id.ToString())
-                .AddField("Account creation", $"{user.CreationTimestamp.Humanize()} ({user.CreationTimestamp:yyyy-MM-dd hh:mm})")
+                .AddField("Account creation", Formatter.Timestamp(user.CreationTimestamp, TimestampFormat.RelativeTime))
                 .WithThumbnail(user.AvatarUrl);
 
             // if member then add guild related fields
@@ -84,7 +83,7 @@ namespace Taishakuten.Commands
             {
                 var member = user as DiscordMember;
 
-                embed.AddField("Guild join", $"{member.JoinedAt.Humanize()} ({member.JoinedAt:yyyy-MM-dd hh:mm})");
+                embed.AddField("Guild join", Formatter.Timestamp(member.JoinedAt, TimestampFormat.RelativeTime));
                 embed.AddField("Roles", string.Join(", ", member.Roles.Select(x => $"`{x.Name}`")));
             }
 
@@ -115,35 +114,8 @@ namespace Taishakuten.Commands
                 .WithDescription(guild.Id.ToString())
                 .AddField("Owner", guild.Owner.Username)
                 .AddField("Members", guild.MemberCount.ToString())
-                .AddField("Age", $"{guild.CreationTimestamp.Humanize()} ({guild.CreationTimestamp:yyyy-MM-dd hh:mm})")
+                .AddField("Created", Formatter.Timestamp(guild.CreationTimestamp, TimestampFormat.RelativeTime))
                 .WithThumbnail(guild.IconUrl);
-
-            await ctx.CreateResponseAsync(embed);
-        }
-
-        [SlashCommand("channel", "Get information about a channel")]
-        public async Task ChannelCommand(InteractionContext ctx, [Option("channel", "The channel to get information about")] DiscordChannel chan = null)
-        {
-            // get mentioned channel, else use current channel
-            var channel = ctx.Guild.GetChannel((chan ?? ctx.Channel).Id);
-
-            var embed = new DiscordEmbedBuilder()
-                .WithTitle($"#{channel.Name}")
-                .WithDescription(channel.Id.ToString())
-                .AddField("Age", $"{channel.CreationTimestamp.Humanize()} ({channel.CreationTimestamp:yyyy-MM-dd hh:mm})");
-
-            if (!string.IsNullOrWhiteSpace(channel.Topic))
-            {
-                // remove messy newlines
-                var topic = channel.Topic.Replace("\n", "");
-
-                embed.AddField("Topic", topic.Substring(0,
-                    topic.Length < 300 ? topic.Length : 300));
-            }
-
-            // add bitrate if voice/stage channel
-            if (channel.Type == ChannelType.Voice || channel.Type == ChannelType.Stage)
-                embed.AddField("Bitrate", $"{(channel.Bitrate ?? 64000) / 1000}kbps");
 
             await ctx.CreateResponseAsync(embed);
         }

@@ -57,7 +57,7 @@ namespace Taishakuten.Commands
 
             var reminder = _db.Reminders.Where(x => x.Fired && x.User == ctx.User.Id).OrderByDescending(x => x.At).FirstOrDefault();
 
-            if (reminder == default)
+            if (reminder == default || (DateTime.Now - reminder.At).TotalHours > 12)
             {
                 await ctx.CreateResponseAsync("You have no recent reminders to snooze", true);
                 return;
@@ -66,6 +66,9 @@ namespace Taishakuten.Commands
             reminder.Snoozes++;
             reminder.Fired = false;
             reminder.At = DateTime.Now + span.Value;
+
+            // https://stackoverflow.com/a/48300906/9398242
+            _db.Entry(reminder).Property(x => x.Fired).IsModified = true;
 
             _db.SaveChanges();
 
