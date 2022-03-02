@@ -45,6 +45,9 @@ namespace Taishakuten
 
             _context = new DbContextOptionsBuilder<DatabaseContext>()
                 .UseMySql(config.ConnectionString, serverVersion)
+#if DEBUG
+                .LogTo(Console.WriteLine, LogLevel.Information)
+#endif
                 .Options;
 
             // setup discord 
@@ -57,11 +60,12 @@ namespace Taishakuten
             });
 
             client.GuildMemberAdded += GuildMemberAdded;
+            client.GuildAvailable += GuildAvailable;
 
             var scheduler = new Scheduler(new DatabaseContext(_context));
             client.AddExtension(scheduler);
 
-            var scan = new Scan();
+            var scan = new Scan(new DatabaseContext(_context));
             client.AddExtension(scan);
 
             var slash = client.UseSlashCommands(new SlashCommandsConfiguration
@@ -102,6 +106,28 @@ namespace Taishakuten
 
             await client.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private Task GuildAvailable(DiscordClient sender, GuildCreateEventArgs e)
+        {
+            using var db = new DatabaseContext(_context);
+
+            // check if guild already exists
+            if (db.Guilds.Count(x => x.Id == e.Guild.Id) > 0)
+            {
+                return Task.CompletedTask;
+            }
+
+            // add new guild
+            var guild = new Guild
+            {
+                Id = e.Guild.Id
+            };
+
+            db.Guilds.Add(guild);
+            db.SaveChanges();
+
+            return Task.CompletedTask;
         }
 
         private async Task GuildMemberAdded(DiscordClient sender, GuildMemberAddEventArgs e)

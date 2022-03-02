@@ -2,23 +2,28 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Taishakuten.Modules
 {
     class Scan : BaseExtension
     {
+        // yara stuff
         private YaraContext _context;
         private CompiledRules _rules;
         private Scanner _scanner;
 
         private HttpClient _client;
+        private DatabaseContext _db;
+
+        public Scan(DatabaseContext context)
+        {
+            _db = context;
+        }
 
         protected override void Setup(DiscordClient client)
         {
@@ -45,7 +50,13 @@ namespace Taishakuten.Modules
 
         private async Task MessageCreated(DiscordClient sender, DSharpPlus.EventArgs.MessageCreateEventArgs e)
         {
-            // TODO guild settings check
+            if (!(e.Message.Attachments.Count > 0 &&
+                // query could be _db.Guilds.Find but selecting ScanEnabled optimizes the query to only do
+                // SELECT `r`.`ScanEnabled` instead of selecting all fields
+                _db.Guilds.Where(x => x.Id == e.Guild.Id).Select(x => x.ScanEnabled).FirstOrDefault()))
+            {
+                return;
+            }
 
             foreach (var attachment in e.Message.Attachments)
             {
@@ -64,9 +75,15 @@ namespace Taishakuten.Modules
                         .WithTitle(Path.GetFileName(attachment.Url))
                         .WithDescription(hash);
 
-                    foreach (var result in results.Where(x => x.Matches.Count > 0).Take(4))
+                    foreach (var result in results.Take(4))
                     {
-                        embed.AddField("yara:" + result.MatchingRule.Identifier, result.Matches.First().Value[0].ToString());
+                        var match = "-";
+                        if (result.Matches.Count > 0)
+                        {
+                            match = result.Matches.First().Value[0].ToString();
+                        }
+
+                        embed.AddField("yara:" + result.MatchingRule.Identifier, match);
                     }
 
                     await e.Channel.SendMessageAsync(embed);
