@@ -37,7 +37,7 @@ namespace Kurisu.Modules
         {
             if (date < DateTime.Now)
             {
-                throw new ArgumentException("Date given in parameter must be in the futur", nameof(date));
+                throw new ArgumentException("Please provide a date in the future.");
             }
 
             var reminder = new Reminder

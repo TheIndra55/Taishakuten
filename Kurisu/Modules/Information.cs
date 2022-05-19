@@ -137,28 +137,5 @@ namespace Kurisu.Modules
         {
             await ctx.RespondAsync(JsonConvert.SerializeObject(Program.Guilds[ctx.Guild.Id]));
         }
-
-        [Command("joaat"), Aliases("gethashkey")]
-        public async Task Joaat(CommandContext ctx, string value)
-        {
-            // https://en.wikipedia.org/wiki/Jenkins_hash_function#one_at_a_time
-            var length = value.Length;
-            uint hash = 0;
-
-            value = value.ToLower();
-
-            for (var i = 0; i < length; i++)
-            {
-                hash += value[i];
-                hash += (hash << 10);
-                hash ^= (hash >> 6);
-            }
-
-            hash += (hash << 3);
-            hash ^= (hash >> 11);
-            hash += (hash << 15);
-
-            await ctx.RespondAsync($"{hash:x16} {hash}");
-        }
     }
 }

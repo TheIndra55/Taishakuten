@@ -136,9 +136,31 @@ namespace Kurisu
 
             Commands.CommandErrored += async (_, e) =>
             {
+                var ctx = e.Context;
+
                 if (e.Exception is CommandNotFoundException) return;
 
-                await e.Context.RespondAsync($"An error occured while executing the command:\n`{e.Exception.Message}`");
+                if (e.Exception is ArgumentException && e.Exception.Message == "Could not find a suitable overload for the command.")
+                {
+                    // create help command context
+                    var command = ctx.CommandsNext.FindCommand("help", out var args);
+                    var context = ctx.CommandsNext.CreateContext(ctx.Message, ctx.Prefix, command, e.Command.QualifiedName);
+
+                    // send help command
+                    await ctx.CommandsNext.ExecuteCommandAsync(context);
+
+                    return;
+                }
+
+                if (e.Exception is ArgumentException)
+                {
+                    // show exception message but less scary than below
+                    await ctx.RespondAsync((e.Command.Name == "remindme" ? "⏰ " : "") + e.Exception.Message);
+
+                    return;
+                }
+
+                await ctx.RespondAsync($"An error occured while executing the command:\n`{e.Exception.Message}`");
             };
 
             Client.Ready += async (c, e) =>
