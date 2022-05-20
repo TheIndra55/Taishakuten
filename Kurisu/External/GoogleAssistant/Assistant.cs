@@ -70,22 +70,27 @@ namespace Kurisu.External.GoogleAssistant
             // send the gRPC request to google assistant
             await assist.RequestStream.WriteAsync(request);
 
-            // first element is the response without audio
-            await assist.ResponseStream.MoveNext(CancellationToken.None);
-            var response = assist.ResponseStream.Current;
+            DialogStateOut dialogStateOut = null;
 
             // read audio stream
             var audioStream = new MemoryStream();
-            while (await assist.ResponseStream.MoveNext(CancellationToken.None))
+            while (await assist.ResponseStream.MoveNext(CancellationToken.None)) 
             {
                 var current = assist.ResponseStream.Current;
-                current.AudioOut.AudioData.WriteTo(audioStream);
+                current.AudioOut?.AudioData.WriteTo(audioStream);
+
+                if (current.DialogStateOut != null)
+                {
+                    dialogStateOut = current.DialogStateOut;
+                }
             }
+
+            // rewind stream
             audioStream.Position = 0;
 
             await ctx.RespondAsync(new DiscordMessageBuilder()
                 .WithFile(fileName: "response.ogg", stream: audioStream)
-                .WithContent(response.DialogStateOut?.SupplementalDisplayText));
+                .WithContent(dialogStateOut?.SupplementalDisplayText + dialogStateOut?.MicrophoneMode.ToString()));
             audioStream.Dispose();
         }
 
