@@ -89,7 +89,7 @@ namespace Kurisu.External.GoogleAssistant
             audioStream.Position = 0;
 
             await ctx.RespondAsync(new DiscordMessageBuilder()
-                .WithFile(fileName: "response.ogg", stream: audioStream)
+                .AddFile("response.ogg", audioStream)
                 .WithContent(dialogStateOut?.SupplementalDisplayText + dialogStateOut?.MicrophoneMode.ToString()));
             audioStream.Dispose();
         }

@@ -105,7 +105,7 @@ namespace Kurisu
                 Token = Token,
                 TokenType = TokenType.Bot,
                 MinimumLogLevel = LogLevel.Debug,
-                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers // required for welcome messages
+                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContents
             });
 
             Interactivity = Client.UseInteractivity(new InteractivityConfiguration());
