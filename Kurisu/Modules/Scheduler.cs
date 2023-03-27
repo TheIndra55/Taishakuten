@@ -91,5 +91,10 @@ namespace Kurisu.Modules
                     .RunAsync(Program.Connection);
             }
         }
+
+        public override void Dispose()
+        {
+            _timer.Dispose();
+        }
     }
 }

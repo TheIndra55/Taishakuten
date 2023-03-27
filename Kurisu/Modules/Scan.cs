@@ -111,6 +111,10 @@ namespace Kurisu.Modules
             };
         }
 
+        public override void Dispose()
+        {
+        }
+
         private struct DownloadedFile
         {
             public string Hash { get; set; }
