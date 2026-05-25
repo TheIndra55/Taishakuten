@@ -9,23 +9,9 @@
     <PackageReference Include="DSharpPlus" Version="4.5.2" />
     <PackageReference Include="DSharpPlus.CommandsNext" Version="4.5.2" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.5.2" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.74.0" />
-    <PackageReference Include="Google.Apis.Core" Version="1.74.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
-    <PackageReference Include="Grpc.Auth" Version="2.80.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.80.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.80.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Humanizer.Core" Version="3.0.10" />
     <PackageReference Include="RethinkDb.Driver" Version="2.3.150" />
     <ProjectReference Include="..\Kurisu.Scan\Kurisu.Scan.csproj" />
-
-    <Protobuf Include="External\GoogleAssistant\Proto\embedded_assistant.proto" />
-    <Protobuf Include="External\GoogleAssistant\Proto\latlng.proto" />
-    <Protobuf Include="External\GoogleAssistant\Proto\annotations.proto" />
-    <Protobuf Include="External\GoogleAssistant\Proto\http.proto" />
   </ItemGroup>
 
 </Project>

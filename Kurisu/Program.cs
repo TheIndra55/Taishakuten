@@ -15,7 +15,6 @@ using Kurisu.Models;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
 using System.Reflection;
-using Kurisu.External.GoogleAssistant;
 using Microsoft.Extensions.Logging;
 using DSharpPlus.Interactivity.Extensions;
 
@@ -132,7 +131,6 @@ namespace Kurisu
 
             Commands.RegisterCommands<Commands.Welcome>();
             Commands.RegisterCommands<Commands.VirusScan>();
-            Commands.RegisterCommands<Assistant>();
 
             Commands.CommandErrored += async (_, e) =>
             {
