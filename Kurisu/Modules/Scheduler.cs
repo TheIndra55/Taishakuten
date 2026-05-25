@@ -58,7 +58,11 @@ namespace Kurisu.Modules
                     var channel = await _client.GetChannelAsync(ulong.Parse(reminder.ChannelId));
                     var user = await _client.GetUserAsync(ulong.Parse(reminder.UserId));
 
-                    await channel.SendMessageAsync($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.");
+                    var message = new DiscordMessageBuilder()
+                        .WithContent($"⏰ {user.Mention} you wanted to be reminded about: {reminder.Message}.")
+                        .WithAllowedMention(UserMention.All);
+
+                    await channel.SendMessageAsync(message);
                 }
                 catch(Exception ex)
                 {

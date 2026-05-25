@@ -72,14 +72,6 @@ namespace Kurisu.Test
             Assert.IsTrue(reader.Sections.Any(x => new string(x.Name).Trim('\0') == ".text"));
         }
 
-        [Test]
-        public void TestEscapeMentions()
-        {
-            var reminder = JsonConvert.DeserializeObject<Reminder>("{\"message\": \"@everyone\"}");
-
-            Assert.IsTrue(reminder.Message == "@\u200beveryone");
-        }
-
         public enum Food { Pizza, Spaghetti }
 
         [ConVar("convar_string")]

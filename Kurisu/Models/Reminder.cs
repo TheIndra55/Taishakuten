@@ -20,7 +20,7 @@ namespace Kurisu.Models
         [JsonProperty("remind_at")]
         public DateTime At { get; set; }
 
-        [JsonProperty("message"), JsonConverter(typeof(SanitizeStringConverter))]
+        [JsonProperty("message")]
         public string Message { get; set; }
 
         [JsonProperty("is_fired")]
@@ -28,23 +28,5 @@ namespace Kurisu.Models
 
         [JsonProperty("last_error")]
         public string LastError { get; set; } = null;
-    }
-
-    sealed class SanitizeStringConverter : JsonConverter
-    {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(value);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object value, JsonSerializer serializer)
-        {
-            return Util.RemoveMentions((string) reader.Value);
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return true;
-        }
     }
 }
