@@ -1,16 +1,13 @@
-using NUnit.Framework;
-using Kurisu.External.VirusTotal;
-using Kurisu.External.HybridAnalysis;
-using System.Threading.Tasks;
-using System;
-using System.IO;
-using Kurisu.Scan.PE;
-using System.Linq;
-using Newtonsoft.Json;
-using Kurisu.Models;
 using Kurisu.Configuration;
-using System.Reflection;
+using Kurisu.External.HybridAnalysis;
+using Kurisu.External.VirusTotal;
+using Kurisu.Scan.PE;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Kurisu.Test
 {
@@ -30,24 +27,24 @@ namespace Kurisu.Test
             }
         }
 
-        [Test]
-        public async Task TestVirusTotal()
-        {
-            var scan = new VirusTotal();
-            // EICAR test file
-            var result = await scan.ScanAsync(null, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f");
+        //[Test]
+        //public async Task TestVirusTotal()
+        //{
+        //    var scan = new VirusTotal();
+        //    // EICAR test file
+        //    var result = await scan.ScanAsync(null, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f");
 
-            Assert.Greater(result.Score, 50);
-        }
+        //    Assert.Greater(result.Score, 50);
+        //}
 
-        [Test]
-        public async Task TestHybridAnalysis()
-        {
-            var scan = new HybridAnalysis();
-            var result = await scan.ScanAsync(null, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f");
+        //[Test]
+        //public async Task TestHybridAnalysis()
+        //{
+        //    var scan = new HybridAnalysis();
+        //    var result = await scan.ScanAsync(null, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f");
 
-            Assert.Greater(result.Score, 50);
-        }
+        //    Assert.Greater(result.Score, 50);
+        //}
 
         [Test]
         public void TestImports()

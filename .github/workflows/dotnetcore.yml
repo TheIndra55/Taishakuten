@@ -8,26 +8,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v6
+    - uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
 
-    - name: Run tests
+    - name: Test
       run: dotnet test
-      env:
-        HYBRIDANALYSIS_KEY: ${{ secrets.HYBRIDANALYSIS_KEY }}
-        VIRUSTOTAL_KEY: ${{ secrets.VIRUSTOTAL_KEY }}
 
-    - name: Publish with dotnet
-      run: dotnet publish -r linux-arm -c Release -o publish/linux-arm
-    
-    - name: Write version
-      run: 'echo "version $GITHUB_SHA" > publish/linux-arm/build.cfg'
+    - name: Publish
+      run: dotnet publish --configuration Release -o publish --no-restore
 
-    - uses: actions/upload-artifact@v1
+    - run: 'echo "version $GITHUB_SHA" > publish/build.cfg'
+
+    - uses: actions/upload-artifact@v7
       with:
-        name: linux-arm
-        path: publish/linux-arm
+        name: kurisu
+        path: publish
