@@ -4,7 +4,7 @@ namespace Kurisu.Models
 {
     class Welcome
     {
-        [JsonProperty("header")] 
+        [JsonProperty("header")]
         public string Header { get; set; } = "Welcome {0}";
 
         [JsonProperty("body")]

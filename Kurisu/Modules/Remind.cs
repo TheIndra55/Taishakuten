@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
 using Humanizer;
 using Kurisu.Models;
 using RethinkDb.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kurisu.Modules
 {
@@ -60,7 +60,7 @@ namespace Kurisu.Modules
         {
             // get reminders
             RethinkDb.Driver.Ast.Filter query = null;
-            if(filter != "all")
+            if (filter != "all")
             {
                 query = R.Table("reminders").Filter(x => x["user_id"].Eq(ctx.User.Id.ToString()).And(x["guild_id"].Eq(ctx.Guild.Id.ToString())));
             }
@@ -80,7 +80,7 @@ namespace Kurisu.Modules
                 return;
             }
 
-            var hints = new string[] { 
+            var hints = new string[] {
                 "Use d!cancel to cancel any future reminder",
                 "Use d!reminders all to see all your reminders across servers" };
 

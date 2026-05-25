@@ -1,14 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Humanizer;
 using Kurisu.Configuration;
 using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kurisu.Modules
 {
@@ -81,7 +81,7 @@ namespace Kurisu.Modules
         [Command("avatar"), Aliases("pf", "pic"), Description("Shows the user's avatar")]
         public async Task Avatar(CommandContext ctx, DiscordMember user = null, string kind = "guild")
         {
-            if(user == null)
+            if (user == null)
             {
                 user = ctx.Member;
             }

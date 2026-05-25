@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Kurisu.Configuration;
+using Kurisu.VirusScan;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Kurisu.Configuration;
-using Kurisu.VirusScan;
-using Newtonsoft.Json;
 
 namespace Kurisu.External.HybridAnalysis
 {

@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
-using Kurisu.Modules;
+using DSharpPlus.Interactivity.Extensions;
 using Kurisu.Configuration;
 using Kurisu.Models;
+using Kurisu.Modules;
+using Microsoft.Extensions.Logging;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
-using DSharpPlus.Interactivity.Extensions;
+using System.Threading.Tasks;
 
 namespace Kurisu
 {

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using Kurisu.Configuration;
 using Kurisu.Models;
 using RethinkDb.Driver;
 using RethinkDb.Driver.Net;
+using System;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Kurisu.Modules
 {
@@ -42,14 +42,14 @@ namespace Kurisu.Modules
             // get all reminders which passed and did not fire yet
             Cursor<Reminder> cursor = await R
                 .Table("reminders")
-                .Filter(x => 
+                .Filter(x =>
                     x["remind_at"].Lt(R.Now())
                         .And(x["is_fired"]
                             .Eq(false)))
                 .RunCursorAsync<Reminder>(Program.Connection);
 
             // return if not any
-            if(cursor.BufferedSize == 0) return;
+            if (cursor.BufferedSize == 0) return;
 
             foreach (var reminder in cursor)
             {
@@ -64,7 +64,7 @@ namespace Kurisu.Modules
 
                     await channel.SendMessageAsync(message);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // fail
                     reminder.LastError = ex.Message;
@@ -80,7 +80,7 @@ namespace Kurisu.Modules
 
                         await dm.SendMessageAsync($"⏰ It seems your reminder in <#{reminder.ChannelId}> failed, your reminder was: {reminder.Message}");
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         // well we tried everything
                     }

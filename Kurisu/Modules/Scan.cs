@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Kurisu.External.HybridAnalysis;
 using Kurisu.External.VirusTotal;
 using Kurisu.Scan;
 using Kurisu.VirusScan;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Kurisu.Modules
 {
@@ -36,14 +36,14 @@ namespace Kurisu.Modules
         {
             var guild = Program.Guilds[e.Guild.Id];
 
-            if(!e.Message.Attachments.Any()) return;
+            if (!e.Message.Attachments.Any()) return;
             if (!guild.VirusScan.Enabled) return;
 
             // check if any of the attachments contain the right file extension
             var attachment = e.Message.Attachments.FirstOrDefault(x =>
                 guild.VirusScan.Extensions.Contains(Path.GetExtension(x.Url)));
 
-            if(attachment == null) return;
+            if (attachment == null) return;
 
             var file = await GetFile(attachment.Url);
 
@@ -62,7 +62,7 @@ namespace Kurisu.Modules
                     continue;
                 }
 
-                if(result.Score == 0) continue;
+                if (result.Score == 0) continue;
 
                 results.Add(scan, result);
             }

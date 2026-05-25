@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Kurisu.Configuration;
+using Kurisu.VirusScan;
+using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using Kurisu.Configuration;
-using Kurisu.VirusScan;
-using Newtonsoft.Json;
 
 namespace Kurisu.External.VirusTotal
 {

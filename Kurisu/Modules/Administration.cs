@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Kurisu.Configuration;
+using System.Threading.Tasks;
 
 namespace Kurisu.Modules
 {
